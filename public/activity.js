@@ -1,86 +1,90 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const createActivityBtn = document.getElementById('createActivityBtn');
-    const createActivityModal = document.getElementById('createActivityModal');
-    const closeModalBtn = document.querySelector('.close');
-    const activityList = document.getElementById('activityList');
-
-    createActivityBtn.addEventListener('click', function() {
-        createActivityModal.style.display = 'block';
-        createActivityModal.innerHTML = createActivityForm();
-    });
-
-    closeModalBtn.addEventListener('click', function() {
-        createActivityModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target === createActivityModal) {
-            createActivityModal.style.display = 'none';
-        }
-    });
-
-    // Function to create activity form dynamically
-    function createActivityForm() {
-        return `
-            <form id="createActivityForm" style="background-color: #4CAF50; padding: 20px; border-radius: 10px;">
-                <label for="activityName" style="color: white;">Activity Name:</label>
-                <input type="text" id="activityName" name="activityName" required style="margin-bottom: 10px;">
-    
-                <label for="activityLocation" style="color: white;">Location:</label>
-                <input type="text" id="activityLocation" name="activityLocation" required style="margin-bottom: 10px;">
-    
-                <label for="activityDuration" style="color: white;">Duration:</label>
-                <input type="text" id="activityDuration" name="activityDuration" required style="margin-bottom: 10px;">
-    
-                <label for="activityPrice" style="color: white;">Price:</label>
-                <input type="number" id="activityPrice" name="activityPrice" required style="margin-bottom: 10px;">
-    
-                <label for="activityImage" style="color: white;">Image:</label>
-                <input type="file" id="activityImage" name="activityImage" accept="image/*" required style="margin-bottom: 20px;">
-    
-                <button type="submit" style="background-color: white; color: #4CAF50; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Create</button>
-            </form>
-        `;
-    }
-
-    // Function to fetch activities from the server and display them
+document.addEventListener('DOMContentLoaded', () => {
+    const createActivityButton = document.getElementById('createActivityButton');
+    const createActivityContainer = document.getElementById('createActivityContainer');
+    const activitiesContainer = document.getElementById('activitiesContainer');
+  
+    // Function to fetch and display all activities
     async function fetchActivities() {
-        try {
-            const response = await fetch('/activities');
-            const activities = await response.json();
-            activities.forEach(activity => {
-                const card = createActivityCard(activity);
-                activityList.appendChild(card);
-            });
-        } catch (error) {
-            console.error('Error fetching activities:', error);
+      try {
+        const response = await fetch('http://localhost:4000/activities');
+        if (!response.ok) {
+          throw new Error('Failed to fetch activities');
         }
-    }
-
-    // Function to create activity card
-    function createActivityCard(activity) {
-        const card = document.createElement('div');
-        card.classList.add('activity-card');
-        
-        const image = document.createElement('img');
-        image.src = `data:image/jpeg;base64,${activity.activityImage.toString('base64')}`;
-        card.appendChild(image);
-
-        const name = document.createElement('h3');
-        name.textContent = activity.activityName;
-        card.appendChild(name);
-
-        const moreBtn = document.createElement('button');
-        moreBtn.textContent = 'More';
-        moreBtn.addEventListener('click', function() {
-            // Redirect to activity detail page or show more details
-            // You can implement this functionality as per your requirement
+        const activities = await response.json();
+        activitiesContainer.innerHTML = '';
+        activities.forEach(activity => {
+          const activityCard = document.createElement('div');
+          activityCard.classList.add('activity-card');
+          activityCard.innerHTML = `
+            <img src="${activity.activityImage}" alt="${activity.activityName}">
+            <h3>${activity.activityName}</h3>
+            <button onclick="viewActivity(${activity.activityID})">More</button>
+          `;
+          activitiesContainer.appendChild(activityCard);
         });
-        card.appendChild(moreBtn);
-
-        return card;
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+      }
     }
-
-    // Fetch activities when the page is loaded
+  
+    // Function to create the activity form
+    function createActivityForm() {
+      return `
+        <form id="createActivityForm">
+          <label for="activityName">Activity Name:</label>
+          <input type="text" id="activityName" name="activityName" required>
+          
+          <label for="activityLocation">Activity Location:</label>
+          <input type="text" id="activityLocation" name="activityLocation" required>
+  
+          <label for="activityDuration">Activity Duration:</label>
+          <input type="text" id="activityDuration" name="activityDuration" required>
+  
+          <label for="activityPrice">Activity Price:</label>
+          <input type="number" id="activityPrice" name="activityPrice" required>
+  
+          <label for="activityImage">Activity Image (URL):</label>
+          <input type="text" id="activityImage" name="activityImage" required>
+          
+          <button type="submit">Create</button>
+        </form>
+      `;
+    }
+  
+    createActivityButton.addEventListener('click', () => {
+      createActivityContainer.innerHTML = createActivityForm();
+      const createActivityFormElement = document.getElementById('createActivityForm');
+      createActivityFormElement.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(createActivityFormElement);
+        const activityData = {
+          activityName: formData.get('activityName'),
+          activityLocation: formData.get('activityLocation'),
+          activityDuration: formData.get('activityDuration'),
+          activityPrice: formData.get('activityPrice'),
+          activityImage: formData.get('activityImage'),
+        };
+        try {
+          const response = await fetch('http://localhost:4000/activities', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(activityData),
+          });
+          if (!response.ok) {
+            throw new Error('Failed to create activity');
+          }
+          // Clear the form
+          createActivityContainer.innerHTML = '';
+          // Refresh the activities list
+          fetchActivities();
+        } catch (error) {
+          console.error('Error creating activity:', error);
+        }
+      });
+    });
+  
     fetchActivities();
-});
+  });
+  
