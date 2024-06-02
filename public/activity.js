@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     createActivityBtn.addEventListener('click', function() {
         createActivityModal.style.display = 'block';
+        createActivityModal.innerHTML = createActivityForm();
     });
 
     closeModalBtn.addEventListener('click', function() {
@@ -17,6 +18,18 @@ document.addEventListener('DOMContentLoaded', function() {
             createActivityModal.style.display = 'none';
         }
     });
+
+    // Function to create activity form dynamically
+    function createActivityForm() {
+        return `
+            <form id="createActivityForm">
+                <label for="activityName">Activity Name:</label>
+                <input type="text" id="activityName" name="activityName" required>
+                <!-- Add other input fields for activity details -->
+                <button type="submit">Create</button>
+            </form>
+        `;
+    }
 
     // Function to fetch activities from the server and display them
     async function fetchActivities() {
