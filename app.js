@@ -134,6 +134,7 @@ app.delete('/activities/:id', async (req, res) => {
     // Release the client back to the pool
     client.release();
   }
+  
 });
 
 const PORT = process.env.PORT || 4000; // Use the PORT environment variable or default to 3000
