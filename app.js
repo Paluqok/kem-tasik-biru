@@ -102,7 +102,7 @@ app.put('/activities/:id', async (req, res) => {
     // Commit transaction
     await client.query('COMMIT');
 
-    res.status(200).send('ACTIVITY updated successfully');
+    res.status(200).send('Activity updated successfully');
   } catch (err) {
     // Rollback transaction in case of error
     await client.query('ROLLBACK');
@@ -128,7 +128,7 @@ app.delete('/activities/:id', async (req, res) => {
     // Commit transaction
     await client.query('COMMIT');
 
-    res.status(200).send('ACTIVITY deleted successfully');
+    res.status(200).send('Activity deleted successfully');
   } catch (err) {
     // Rollback transaction in case of error
     await client.query('ROLLBACK');
