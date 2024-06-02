@@ -10,8 +10,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Define a route to test the database connection
 app.get('/time', async (req, res) => {
   try {
-    const result = await db.query('SELECT NOW()');
-    res.json(result.rows[0]);
+    const result = await db.query('SELECT * FROM ACTIVITY');
+    res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send('Something went wrong!');
