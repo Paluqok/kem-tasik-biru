@@ -22,11 +22,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to create activity form dynamically
     function createActivityForm() {
         return `
-            <form id="createActivityForm">
-                <label for="activityName">Activity Name:</label>
-                <input type="text" id="activityName" name="activityName" required>
-                <!-- Add other input fields for activity details -->
-                <button type="submit">Create</button>
+            <form id="createActivityForm" style="background-color: #4CAF50; padding: 20px; border-radius: 10px;">
+                <label for="activityName" style="color: white;">Activity Name:</label>
+                <input type="text" id="activityName" name="activityName" required style="margin-bottom: 10px;">
+    
+                <label for="activityLocation" style="color: white;">Location:</label>
+                <input type="text" id="activityLocation" name="activityLocation" required style="margin-bottom: 10px;">
+    
+                <label for="activityDuration" style="color: white;">Duration:</label>
+                <input type="text" id="activityDuration" name="activityDuration" required style="margin-bottom: 10px;">
+    
+                <label for="activityPrice" style="color: white;">Price:</label>
+                <input type="number" id="activityPrice" name="activityPrice" required style="margin-bottom: 10px;">
+    
+                <label for="activityImage" style="color: white;">Image:</label>
+                <input type="file" id="activityImage" name="activityImage" accept="image/*" required style="margin-bottom: 20px;">
+    
+                <button type="submit" style="background-color: white; color: #4CAF50; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Create</button>
             </form>
         `;
     }

@@ -6,6 +6,15 @@ const pool = new Pool({
   }
 });
 
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('Error connecting to the database:', err);
+  } else {
+    console.log('Connected to the database');
+    release(); // Release the client back to the pool
+  }
+});
+
 module.exports = {
   query: (text, params) => pool.query(text, params),
 };
