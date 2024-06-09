@@ -25,6 +25,24 @@ app.get('/time', async (req, res) => {
   }
 });
 
+app.get('/create-customer', (req, res) => {
+  res.sendFile(path.join(__dirname, 'create-customer.html'));
+});
+
+app.post('/create-customer', async (req, res) => {
+  const { custname, custaddress, custemail, custphone, custpassword } = req.body;
+  try {
+      const result = await pool.query(
+          'INSERT INTO customer (custname, custaddress, custemail, custphone, custpassword) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          [custname, custaddress, custemail, custphone, custpassword]
+      );
+      res.status(201).send('Customer created successfully');
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+  }
+});
+
 // Route to get all activities
 app.get('/activities', async (req, res) => {
   try {

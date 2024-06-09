@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const dotenv = require('dotenv');
 
 const pool = new Pool({
   max: 10, // connection limit
