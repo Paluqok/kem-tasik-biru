@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const createActivityBtn = document.getElementById('createActivityBtn');
     const createActivityModal = document.getElementById('createActivityModal');
-    const closeModalBtn = document.querySelector('.close');
     const activityList = document.getElementById('activityList');
 
     createActivityBtn.addEventListener('click', function() {
+        console.log('Create Activity button clicked');
         createActivityModal.innerHTML = createActivityForm(); // Set the form HTML first
         createActivityModal.style.display = 'block'; // Then display the modal
         attachFormSubmitHandler(); // Attach form submit handler after adding the form to the DOM
@@ -14,11 +14,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function attachCloseModalHandler() {
         const closeModalBtn = document.querySelector('.close');
         closeModalBtn.addEventListener('click', function() {
+            console.log('Close button clicked');
             createActivityModal.style.display = 'none';
         });
 
         window.addEventListener('click', function(event) {
             if (event.target === createActivityModal) {
+                console.log('Outside modal clicked');
                 createActivityModal.style.display = 'none';
             }
         });
@@ -54,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('createActivityForm');
         form.addEventListener('submit', async function(event) {
             event.preventDefault();
+            console.log('Form submitted');
 
             const formData = new FormData(form);
             const activityData = {
