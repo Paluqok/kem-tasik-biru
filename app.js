@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors'); // Import the CORS middleware
-const db = require('./db'); // Import the database configuration
+const cors = require('cors');
+const db = require('./db');
 
 const app = express();
 
@@ -41,6 +41,7 @@ app.post('/activities', async (req, res) => {
   const client = await db.pool.connect();
   try {
     const { activityname, activitylocation, activityduration, activityprice, activityimage } = req.body;
+    console.log('Received data:', req.body); // Log received data for debugging
 
     // Begin transaction
     await client.query('BEGIN');
@@ -53,6 +54,7 @@ app.post('/activities', async (req, res) => {
     `;
     const insertActivityValues = [activityname, activitylocation, activityduration, activityprice, activityimage];
     const result = await client.query(insertActivityText, insertActivityValues);
+    console.log('Insert result:', result.rows); // Log result for debugging
 
     // Commit transaction
     await client.query('COMMIT');
@@ -61,7 +63,7 @@ app.post('/activities', async (req, res) => {
   } catch (err) {
     // Rollback transaction in case of error
     await client.query('ROLLBACK');
-    console.error('Error creating activity:', err);
+    console.error('Error creating activity:', err); // Detailed error logging
     res.status(500).send('Something went wrong!');
   } finally {
     // Release the client back to the pool
@@ -140,7 +142,7 @@ app.delete('/activities/:id', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 4000; // Use the PORT environment variable or default to 4000
+const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
