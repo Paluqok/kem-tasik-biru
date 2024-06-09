@@ -20,19 +20,18 @@ app.get('/time', async (req, res) => {
     const result = await db.query('SELECT NOW()');
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.error('Error in /time route:', err);
     res.status(500).send('Something went wrong!');
   }
 });
 
-
 // Route to get all activities
 app.get('/activities', async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM activity');
+    const result = await db.query('SELECT * FROM public.activity');
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error('Error in /activities route:', err);
     res.status(500).send('Something went wrong!');
   }
 });
@@ -48,7 +47,7 @@ app.post('/activities', async (req, res) => {
 
     // Insert the new activity
     const insertActivityText = `
-      INSERT INTO activity (activityname, activitylocation, activityduration, activityprice, activityimage)
+      INSERT INTO public.activity (activityname, activitylocation, activityduration, activityprice, activityimage)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING activityid;
     `;
@@ -74,10 +73,10 @@ app.post('/activities', async (req, res) => {
 app.get('/activities/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await db.query('SELECT * FROM activity WHERE activityid = $1', [id]);
+    const result = await db.query('SELECT * FROM public.activity WHERE activityid = $1', [id]);
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.error('Error in /activities/:id route:', err);
     res.status(500).send('Something went wrong!');
   }
 });
@@ -93,7 +92,7 @@ app.put('/activities/:id', async (req, res) => {
 
     // Update the activity
     const updateActivityText = `
-      UPDATE activity
+      UPDATE public.activity
       SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5
       WHERE activityid = $6;
     `;
@@ -124,7 +123,7 @@ app.delete('/activities/:id', async (req, res) => {
     await client.query('BEGIN');
 
     // Delete the activity
-    await client.query('DELETE FROM activity WHERE activityid = $1', [id]);
+    await client.query('DELETE FROM public.activity WHERE activityid = $1', [id]);
 
     // Commit transaction
     await client.query('COMMIT');
