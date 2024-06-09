@@ -5,20 +5,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const activityList = document.getElementById('activityList');
 
     createActivityBtn.addEventListener('click', function() {
-        createActivityModal.style.display = 'block';
-        createActivityModal.innerHTML = createActivityForm();
+        createActivityModal.innerHTML = createActivityForm(); // Set the form HTML first
+        createActivityModal.style.display = 'block'; // Then display the modal
         attachFormSubmitHandler(); // Attach form submit handler after adding the form to the DOM
+        attachCloseModalHandler(); // Attach the close modal handler
     });
 
-    closeModalBtn.addEventListener('click', function() {
-        createActivityModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target === createActivityModal) {
+    function attachCloseModalHandler() {
+        const closeModalBtn = document.querySelector('.close');
+        closeModalBtn.addEventListener('click', function() {
             createActivityModal.style.display = 'none';
-        }
-    });
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === createActivityModal) {
+                createActivityModal.style.display = 'none';
+            }
+        });
+    }
 
     // Function to create activity form dynamically
     function createActivityForm() {
@@ -41,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
                 <button type="submit" style="background-color: white; color: #4CAF50; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Create</button>
             </form>
+            <span class="close">&times;</span> <!-- Close button inside the modal content -->
         `;
     }
 
