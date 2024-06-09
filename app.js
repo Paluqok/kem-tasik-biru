@@ -33,7 +33,7 @@ app.post('/create-customer', async (req, res) => {
   const { custname, custaddress, custemail, custphone, custpassword } = req.body;
   try {
       const result = await pool.query(
-          'INSERT INTO customer (custname, custaddress, custemail, custphone, custpassword) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          'INSERT INTO public.customer (custname, custaddress, custemail, custphone, custpassword) VALUES ($1, $2, $3, $4, $5) RETURNING *',
           [custname, custaddress, custemail, custphone, custpassword]
       );
       res.status(201).send('Customer created successfully');
