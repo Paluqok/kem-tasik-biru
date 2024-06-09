@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     createActivityBtn.addEventListener('click', function() {
         createActivityModal.style.display = 'block';
         createActivityModal.innerHTML = createActivityForm();
+        attachFormSubmitHandler(); // Attach form submit handler after adding the form to the DOM
     });
 
     closeModalBtn.addEventListener('click', function() {
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to create activity form dynamically
     function createActivityForm() {
         return `
-            <form id="createActivityForm" style="background-color: #4CAF50; padding: 20px; border-radius: 10px;">
+            <form id="createActivityForm" method="POST" action="/activities" style="background-color: #4CAF50; padding: 20px; border-radius: 10px;">
                 <label for="activityname" style="color: white;">Activity Name:</label>
                 <input type="text" id="activityname" name="activityname" required style="margin-bottom: 10px;">
     
@@ -41,6 +42,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button type="submit" style="background-color: white; color: #4CAF50; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Create</button>
             </form>
         `;
+    }
+
+    // Function to attach the form submit handler
+    function attachFormSubmitHandler() {
+        const form = document.getElementById('createActivityForm');
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const activityData = {
+                activityname: formData.get('activityname'),
+                activitylocation: formData.get('activitylocation'),
+                activityduration: formData.get('activityduration'),
+                activityprice: formData.get('activityprice'),
+                activityimage: formData.get('activityimage')
+            };
+
+            try {
+                const response = await fetch('/activities', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(activityData)
+                });
+
+                if (response.ok) {
+                    console.log('Activity created successfully');
+                    createActivityModal.style.display = 'none';
+                    location.reload(); // Reload to fetch the new activities
+                } else {
+                    console.error('Failed to create activity', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error creating activity:', error);
+            }
+        });
     }
 
     // Function to fetch activities from the server and display them
