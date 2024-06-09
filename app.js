@@ -28,7 +28,7 @@ app.get('/time', async (req, res) => {
 // Route to get all activities
 app.get('/activities', async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM ACTIVITY');
+    const result = await db.query('SELECT * FROM activity');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -40,24 +40,24 @@ app.get('/activities', async (req, res) => {
 app.post('/activities', async (req, res) => {
   const client = await db.pool.connect();
   try {
-    const { activityName, activityLocation, activityDuration, activityPrice, activityImage } = req.body;
+    const { activityname, activitylocation, activityduration, activityprice, activityimage } = req.body;
 
     // Begin transaction
     await client.query('BEGIN');
 
     // Insert the new activity
     const insertActivityText = `
-      INSERT INTO ACTIVITY (activityName, activityLocation, activityDuration, activityPrice, activityImage)
+      INSERT INTO activity (activityname, activitylocation, activityduration, activityprice, activityimage)
       VALUES ($1, $2, $3, $4, $5)
-      RETURNING activityID;
+      RETURNING activityid;
     `;
-    const insertActivityValues = [activityName, activityLocation, activityDuration, activityPrice, activityImage];
+    const insertActivityValues = [activityname, activitylocation, activityduration, activityprice, activityimage];
     const result = await client.query(insertActivityText, insertActivityValues);
 
     // Commit transaction
     await client.query('COMMIT');
 
-    res.status(201).json({ activityID: result.rows[0].activityID });
+    res.status(201).json({ activityid: result.rows[0].activityid });
   } catch (err) {
     // Rollback transaction in case of error
     await client.query('ROLLBACK');
@@ -73,7 +73,7 @@ app.post('/activities', async (req, res) => {
 app.get('/activities/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await db.query('SELECT * FROM ACTIVITY WHERE activityID = $1', [id]);
+    const result = await db.query('SELECT * FROM activity WHERE activityid = $1', [id]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -85,18 +85,18 @@ app.get('/activities/:id', async (req, res) => {
 app.put('/activities/:id', async (req, res) => {
   const client = await db.pool.connect();
   const { id } = req.params;
-  const { activityName, activityLocation, activityDuration, activityPrice, activityImage } = req.body;
+  const { activityname, activitylocation, activityduration, activityprice, activityimage } = req.body;
   try {
     // Begin transaction
     await client.query('BEGIN');
 
     // Update the activity
     const updateActivityText = `
-      UPDATE ACTIVITY
-      SET activityName = $1, activityLocation = $2, activityDuration = $3, activityPrice = $4, activityImage = $5
-      WHERE activityID = $6;
+      UPDATE activity
+      SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5
+      WHERE activityid = $6;
     `;
-    const updateActivityValues = [activityName, activityLocation, activityDuration, activityPrice, activityImage, id];
+    const updateActivityValues = [activityname, activitylocation, activityduration, activityprice, activityimage, id];
     await client.query(updateActivityText, updateActivityValues);
 
     // Commit transaction
@@ -123,7 +123,7 @@ app.delete('/activities/:id', async (req, res) => {
     await client.query('BEGIN');
 
     // Delete the activity
-    await client.query('DELETE FROM ACTIVITY WHERE activityID = $1', [id]);
+    await client.query('DELETE FROM activity WHERE activityid = $1', [id]);
 
     // Commit transaction
     await client.query('COMMIT');
