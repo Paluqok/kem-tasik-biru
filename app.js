@@ -69,27 +69,6 @@ app.post('/activities', async (req, res) => {
     const result = await client.query(insertActivityText, insertActivityValues);
     console.log('Insert result:', result.rows); // Log result for debugging
 
-    // Check if guidedtour or agerestriction fields are present to determine activity type
-    if ('guidedtour' in req.body) {
-      const { guidedtour } = req.body;
-      // Insert day activity into the day table
-      const insertDayActivityText = `
-        INSERT INTO public.day (activityid, guidedtour)
-        VALUES ($1, $2);
-      `;
-      const insertDayActivityValues = [result.rows[0].activityid, guidedtour];
-      await client.query(insertDayActivityText, insertDayActivityValues);
-    } else if ('agerestriction' in req.body) {
-      const { agerestriction } = req.body;
-      // Insert night activity into the night table
-      const insertNightActivityText = `
-        INSERT INTO public.night (activityid, agerestriction)
-        VALUES ($1, $2);
-      `;
-      const insertNightActivityValues = [result.rows[0].activityid, agerestriction];
-      await client.query(insertNightActivityText, insertNightActivityValues);
-    }
-
     // Commit transaction
     await client.query('COMMIT');
 

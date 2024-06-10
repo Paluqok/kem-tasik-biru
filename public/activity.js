@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const createActivityBtn = document.getElementById('createActivityBtn');
     const createActivityModal = document.getElementById('createActivityModal');
     const activityList = document.getElementById('activityList');
-    const activityTypeSelect = document.getElementById('activitytype');
 
     createActivityBtn.addEventListener('click', function() {
         console.log('Create Activity button clicked');
@@ -20,17 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target === createActivityModal) {
             console.log('Outside modal clicked');
             createActivityModal.style.display = 'none';
-        }
-    });
-
-    activityTypeSelect.addEventListener('change', function() {
-        const selectedType = activityTypeSelect.value;
-        if (selectedType === 'day') {
-            document.getElementById('dayFields').style.display = 'block';
-            document.getElementById('nightFields').style.display = 'none';
-        } else if (selectedType === 'night') {
-            document.getElementById('dayFields').style.display = 'none';
-            document.getElementById('nightFields').style.display = 'block';
         }
     });
 
