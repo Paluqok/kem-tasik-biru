@@ -107,9 +107,9 @@ app.put('/activities/:id', async (req, res) => {
     // Retrieve the current activity data from the database
     const getActivityQuery = 'SELECT * FROM public.activity WHERE activityid = $1';
     const getActivityResult = await client.query(getActivityQuery, [id]);
-    const currentActivity = getActivityResult.rows[0];
+    const updatedActivity = getActivityResult.rows[0];
 
-    if (!currentActivityData) {
+    if (!updatedActivityData) {
       return res.status(404).send('Activity not found!');
     }
 

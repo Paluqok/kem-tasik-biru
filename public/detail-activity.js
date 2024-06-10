@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const confirmation = confirm('Are you sure you want to delete this activity?');
         if (confirmation) {
             try {
-                const response = await fetch(`/activities/${activityId}`, {
+                const response = await fetch(`/activities/${activityid}`, {
                     method: 'DELETE'
                 });
                 if (response.ok) {
