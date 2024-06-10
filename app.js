@@ -142,7 +142,6 @@ app.put('/activities/:id', async (req, res) => {
   }
 });
 
-
 // Route to delete an activitye
 app.delete('/activities/:id', async (req, res) => {
   const client = await db.pool.connect();

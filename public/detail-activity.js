@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         price.textContent = 'Price: $' + activity.activityprice;
         activityDetail.appendChild(price);
 
+        // Create image element
+        const image = document.createElement('img');
+        image.src = activity.activityimage; // Assuming activityimage is the URL of the image
+        image.alt = 'Activity Image';
+        activityDetail.appendChild(image);
+
         // Create update button
         const updateBtn = document.createElement('button');
         updateBtn.textContent = 'Update';
