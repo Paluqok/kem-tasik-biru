@@ -96,7 +96,7 @@ app.get('/activities/:id', async (req, res) => {
 });
 
 // Route to update an activity
-app.put('/updateactivities/:id', async (req, res) => {
+app.put('/activities/:id', async (req, res) => {
   const client = await db.pool.connect();
   const { id } = req.params;
   const { activityname, activitylocation, activityduration, activityprice, activityimage } = req.body;
