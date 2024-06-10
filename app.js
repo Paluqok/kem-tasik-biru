@@ -16,8 +16,26 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Configure Multer
-const storage = multer.memoryStorage(); // Use memory storage to handle image data as buffer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
 const upload = multer({ storage });
+
+// Define a route to test the database connection
+app.get('/time', async (req, res) => {
+  try {
+    const result = await db.query('SELECT NOW()');
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error in /time route:', err);
+    res.status(500).send('Something went wrong!');
+  }
+});
 
 // Route to get all activities
 app.get('/activities', async (req, res) => {
@@ -31,11 +49,10 @@ app.get('/activities', async (req, res) => {
 });
 
 // Route to create a new activity
-app.post('/activities', upload.single('activityimage'), async (req, res) => {
+app.post('/activities', async (req, res) => {
   const client = await db.pool.connect();
   try {
-    const { activityname, activitylocation, activityduration, activityprice } = req.body;
-    const activityimage = req.file.buffer.toString('binary'); // Encode the image buffer to binary before storing
+    const { activityname, activitylocation, activityduration, activityprice, activityimage } = req.body;
     console.log('Received data:', req.body); // Log received data for debugging
 
     // Begin transaction
@@ -79,11 +96,10 @@ app.get('/activities/:id', async (req, res) => {
 });
 
 // Route to update an activity
-app.put('/activities/:id', upload.single('activityimage'), async (req, res) => {
+app.put('/activities/:id', async (req, res) => {
   const client = await db.pool.connect();
   const { id } = req.params;
-  const { activityname, activitylocation, activityduration, activityprice } = req.body;
-  const activityimage = req.file ? req.file.buffer : null; // Get the image buffer if file is provided
+  const { activityname, activitylocation, activityduration, activityprice, activityimage } = req.body;
   try {
     // Begin transaction
     await client.query('BEGIN');
@@ -91,7 +107,7 @@ app.put('/activities/:id', upload.single('activityimage'), async (req, res) => {
     // Update the activity
     const updateActivityText = `
       UPDATE public.activity
-      SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = COALESCE($5, activityimage)
+      SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5
       WHERE activityid = $6;
     `;
     const updateActivityValues = [activityname, activitylocation, activityduration, activityprice, activityimage, id];
@@ -112,7 +128,7 @@ app.put('/activities/:id', upload.single('activityimage'), async (req, res) => {
   }
 });
 
-// Route to delete an activity
+// Route to delete an activitye
 app.delete('/activities/:id', async (req, res) => {
   const client = await db.pool.connect();
   const { id } = req.params;
