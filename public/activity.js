@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         card.classList.add('activity-card');
         
         const image = document.createElement('img');
-        image.src = `data:image/jpeg;base64,${activity.activityimage.toString('base64')}`;
+        image.src = `data:image/jpeg;base64,${Buffer.from(activity.activityimage, 'binary').toString('base64')}`;
         card.appendChild(image);
 
         const name = document.createElement('h3');
