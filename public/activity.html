@@ -9,21 +9,42 @@
 <body>
     <header>
         <h1>Activity Management System</h1>
-        <button id="createActivityBtn">Create Activity</button>
     </header>
 
     <main>
+
+        <button id="createActivityBtn">Create Activity</button>
+
         <section id="activityList">
             <!-- Activity cards will be dynamically added here -->
         </section>
-    </main>
 
-    <div id="createActivityModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <!-- Create Activity Form will be here -->
+        <div id="createActivityModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <!-- Create Activity Form -->
+                <form id="createActivityForm" action="/activities" method="post">
+                    <h2>Create Activity</h2>
+                    <label for="activityname">Activity Name:</label>
+                    <input type="text" id="activityname" name="activityname" required>
+
+                    <label for="activitylocation">Location:</label>
+                    <input type="text" id="activitylocation" name="activitylocation" required>
+
+                    <label for="activityduration">Duration:</label>
+                    <input type="text" id="activityduration" name="activityduration" required>
+
+                    <label for="activityprice">Price:</label>
+                    <input type="number" id="activityprice" name="activityprice" required>
+
+                    <label for="activityimage">Image:</label>
+                    <input type="file" id="activityimage" name="activityimage" accept="image/*" required>
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script src="activity.js"></script>
 </body>

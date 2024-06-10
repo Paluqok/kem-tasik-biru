@@ -24,17 +24,52 @@ button {
     cursor: pointer;
 }
 
+#createActivityBtn{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
 button:hover {
     background-color: #45a049;
 }
 
 main {
     padding: 20px;
+    position: relative;
+}
+
+#createActivityForm label{
+    display: block;
+    margin: 10px 0 5px;
+}
+
+#createActivityForm input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#createActivityForm button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#createActivityForm button:hover {
+    background-color: #0056b3;
 }
 
 #activityList {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 60px; 
 }
 
 .activity-card {
