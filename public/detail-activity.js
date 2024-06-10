@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         activityDetail.appendChild(duration);
 
         const price = document.createElement('p');
-        price.textContent = 'Price: $' + activity.activityprice;
+        price.textContent = 'Price: RM' + activity.activityprice;
         activityDetail.appendChild(price);
 
         // Create image element
@@ -64,9 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Fetch activity details when the page is loaded
-    async function fetchActivityDetails(activityId) {
+    async function fetchActivityDetails(activityid) {
         try {
-            const response = await fetch(`/activities/${activityId}`);
+            const response = await fetch(`/activities/${activityid}`);
             const activity = await response.json();
             displayActivityDetails(activity);
         } catch (error) {
@@ -76,9 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch activity details based on activity ID from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const activityId = urlParams.get('id');
-    if (activityId) {
-        fetchActivityDetails(activityId);
+    const activityid = urlParams.get('id');
+    if (activityid) {
+        fetchActivityDetails(activityid);
     } else {
         console.error('Activity ID not found in URL');
     }
@@ -108,17 +108,17 @@ document.addEventListener('DOMContentLoaded', function() {
             activityimage: formData.get('updatedActivityImage')
         };
         try {
-            const response = await fetch(`/activities/${activityId}`, {
+            const response = await fetch(`/activities/${activityid}`, {
                 method: 'PUT',
                 headers: {
-                    
+                    'Content-Type': 'application/json'
                 },
-                body: updatedActivityData
+                body: JSON.stringify(updatedActivityData)
             });
             if (response.ok) {
                 console.log('Activity updated successfully');
                 // Update displayed activity details
-                fetchActivityDetails(activityId);
+                fetchActivityDetails(activityid);
             } else {
                 console.error('Failed to update activity:', response.statusText);
             }
@@ -130,9 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle delete confirmation form submission
-    const deleteActivityFormElement = document.querySelector('#deleteActivityForm form');
-    deleteActivityFormElement.addEventListener('submit', async function(event) {
-        event.preventDefault();
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    confirmDeleteBtn.addEventListener('click', async function() {
         const confirmation = confirm('Are you sure you want to delete this activity?');
         if (confirmation) {
             try {
@@ -150,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error deleting activity:', error);
             }
         }
-        // Close delete confirmation form after submission
         deleteActivityForm.style.display = 'none';
     });
 });

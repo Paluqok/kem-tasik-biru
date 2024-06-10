@@ -109,23 +109,18 @@ app.put('/activities/:id', async (req, res) => {
     const getActivityResult = await client.query(getActivityQuery, [id]);
     const currentActivity = getActivityResult.rows[0];
 
-    // Check if each field is included in the request body, if not, use the current value
-    const updatedActivityData = {
-      activityname: activityname || currentActivity.activityname,
-      activitylocation: activitylocation || currentActivity.activitylocation,
-      activityduration: activityduration || currentActivity.activityduration,
-      activityprice: activityprice || currentActivity.activityprice,
-      activityimage: activityimage || currentActivity.activityimage
-    };
+    if (!currentActivityData) {
+      return res.status(404).send('Activity not found!');
+    }
 
-    // Update the activity
-    const updateActivityText = `
+    // Update the activity data with the new values
+    const updateQuery = `
       UPDATE public.activity
       SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5
       WHERE activityid = $6;
     `;
     const updateActivityValues = [updatedActivityData.activityname, updatedActivityData.activitylocation, updatedActivityData.activityduration, updatedActivityData.activityprice, updatedActivityData.activityimage, id];
-    await client.query(updateActivityText, updateActivityValues);
+    await client.query(updateQuery, updateActivityValues);
 
     // Commit transaction
     await client.query('COMMIT');
@@ -142,30 +137,21 @@ app.put('/activities/:id', async (req, res) => {
   }
 });
 
-// Route to delete an activitye
+// Route to delete an activity
 app.delete('/activities/:id', async (req, res) => {
-  const client = await db.pool.connect();
   const { id } = req.params;
   try {
-    // Begin transaction
-    await client.query('BEGIN');
-
-    // Delete the activity
-    await client.query('DELETE FROM public.activity WHERE activityid = $1', [id]);
-
-    // Commit transaction
-    await client.query('COMMIT');
-
-    res.status(200).send('Activity deleted successfully');
+    await db.query('DELETE FROM public.activity WHERE activityid = $1', [id]);
+    res.sendStatus(204);
   } catch (err) {
-    // Rollback transaction in case of error
-    await client.query('ROLLBACK');
-    console.error('Error deleting activity:', err);
+    console.error('Error in /activities/:id route:', err);
     res.status(500).send('Something went wrong!');
-  } finally {
-    // Release the client back to the pool
-    client.release();
   }
+});
+
+// Route to handle image uploads
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.json({ filename: req.file.filename });
 });
 
 const PORT = process.env.PORT || 4000;
