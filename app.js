@@ -104,13 +104,27 @@ app.put('/activities/:id', async (req, res) => {
     // Begin transaction
     await client.query('BEGIN');
 
+    // Retrieve the current activity data from the database
+    const getActivityQuery = 'SELECT * FROM public.activity WHERE activityid = $1';
+    const getActivityResult = await client.query(getActivityQuery, [id]);
+    const currentActivity = getActivityResult.rows[0];
+
+    // Check if each field is included in the request body, if not, use the current value
+    const updatedActivityData = {
+      activityname: activityname || currentActivity.activityname,
+      activitylocation: activitylocation || currentActivity.activitylocation,
+      activityduration: activityduration || currentActivity.activityduration,
+      activityprice: activityprice || currentActivity.activityprice,
+      activityimage: activityimage || currentActivity.activityimage
+    };
+
     // Update the activity
     const updateActivityText = `
       UPDATE public.activity
       SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5
       WHERE activityid = $6;
     `;
-    const updateActivityValues = [activityname, activitylocation, activityduration, activityprice, activityimage, id];
+    const updateActivityValues = [updatedActivityData.activityname, updatedActivityData.activitylocation, updatedActivityData.activityduration, updatedActivityData.activityprice, updatedActivityData.activityimage, id];
     await client.query(updateActivityText, updateActivityValues);
 
     // Commit transaction
@@ -127,6 +141,7 @@ app.put('/activities/:id', async (req, res) => {
     client.release();
   }
 });
+
 
 // Route to delete an activitye
 app.delete('/activities/:id', async (req, res) => {
