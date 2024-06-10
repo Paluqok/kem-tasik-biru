@@ -61,6 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
         createActivityForm.reset(); // Reset form fields if needed
     });
 
+     // Function to handle clicking on "More" button
+     function handleMoreButtonClick(activityId) {
+        // Redirect to detail-activity.html page with activity ID as query parameter
+        window.location.href = `/detail-activity.html?id=${activityId}`;
+    }
+
     // Fetch activities when the page is loaded
     async function fetchActivities() {
         try {
@@ -92,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
         moreBtn.textContent = 'More';
         moreBtn.addEventListener('click', function() {
             // Redirect to activity detail page or show more details
-            // You can implement this functionality as per your requirement
+            handleMoreButtonClick(activity.activityid);
         });
         card.appendChild(moreBtn);
 
