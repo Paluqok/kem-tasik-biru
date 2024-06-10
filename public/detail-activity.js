@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle update form submission
-    const updateActivityFormElement = document.querySelector('#updateActivityForm form');
+    const updateActivityFormElement = document.querySelector('#updateActivityForm');
     updateActivityFormElement.addEventListener('submit', async function(event) {
         event.preventDefault();
         const formData = new FormData(updateActivityFormElement);
