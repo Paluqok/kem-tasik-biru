@@ -52,8 +52,7 @@ app.get('/activities', async (req, res) => {
 app.post('/activities', async (req, res) => {
   const client = await db.pool.connect();
   try {
-    const { activityname, activitylocation, activityduration, activityprice } = req.body;
-    const activityimage = req.file.buffer; // Get the image buffer from multer
+    const { activityname, activitylocation, activityduration, activityprice , activityimage } = req.body;
     console.log('Received data:', req.body); // Log received data for debugging
 
     // Begin transaction
