@@ -104,6 +104,9 @@ main {
     border: 1px solid #888;
     width: 80%;
     max-width: 500px;
+    position: relative; /* Add this line */
+    top: 20%; /* Add this line */
+    transform: translateY(-50%);
 }
 
 .close {
