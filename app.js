@@ -96,75 +96,27 @@ app.get('/activities/:id', async (req, res) => {
 });
 
 // Route to update an activity
-app.put('/updateactivities/:id', async (req, res) => {
-  const client = await db.pool.connect();
+app.put('/activities/:id', async (req, res) => {
   const { id } = req.params;
-  const { activityname, activitylocation, activityduration, activityprice, activityimage } = req.body;
   try {
-    // Begin transaction
-    await client.query('BEGIN');
-
-    // Retrieve the current activity data from the database
-    const getActivityQuery = 'SELECT * FROM public.activity WHERE activityid = $1';
-    const getActivityResult = await client.query(getActivityQuery, [id]);
-    const currentActivity = getActivityResult.rows[0];
-
-    // Check if each field is included in the request body, if not, use the current value
-    const updatedActivityData = {
-      activityname: activityname || currentActivity.activityname,
-      activitylocation: activitylocation || currentActivity.activitylocation,
-      activityduration: activityduration || currentActivity.activityduration,
-      activityprice: activityprice || currentActivity.activityprice,
-      activityimage: activityimage || currentActivity.activityimage
-    };
-
-    // Update the activity
-    const updateActivityText = `
-      UPDATE public.activity
-      SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5
-      WHERE activityid = $6;
-    `;
-    const updateActivityValues = [updatedActivityData.activityname, updatedActivityData.activitylocation, updatedActivityData.activityduration, updatedActivityData.activityprice, updatedActivityData.activityimage, id];
-    await client.query(updateActivityText, updateActivityValues);
-
-    // Commit transaction
-    await client.query('COMMIT');
-
+    const { activityname, activitylocation, activityduration, activityprice , activityimage } = req.body;
+    const result = await db.query('UPDATE public.activity SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5 WHERE activityid = $6', [activityname, activitylocation, activityduration, activityprice, activityimage, id]);
     res.status(200).send('Activity updated successfully');
   } catch (err) {
-    // Rollback transaction in case of error
-    await client.query('ROLLBACK');
     console.error('Error updating activity:', err);
     res.status(500).send('Something went wrong!');
-  } finally {
-    // Release the client back to the pool
-    client.release();
   }
 });
 
-// Route to delete an activitye
+// Route to delete an activity
 app.delete('/activities/:id', async (req, res) => {
-  const client = await db.pool.connect();
   const { id } = req.params;
   try {
-    // Begin transaction
-    await client.query('BEGIN');
-
-    // Delete the activity
-    await client.query('DELETE FROM public.activity WHERE activityid = $1', [id]);
-
-    // Commit transaction
-    await client.query('COMMIT');
-
+    const result = await db.query('DELETE FROM public.activity WHERE activityid = $1', [id]);
     res.status(200).send('Activity deleted successfully');
   } catch (err) {
-    // Rollback transaction in case of error
-    await client.query('ROLLBACK');
     console.error('Error deleting activity:', err);
     res.status(500).send('Something went wrong!');
-  } finally {
-    // Release the client back to the pool
-    client.release();
   }
 });
 

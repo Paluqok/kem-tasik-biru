@@ -104,15 +104,16 @@ document.addEventListener('DOMContentLoaded', function() {
             activityname: formData.get('activityname'),
             activitylocation: formData.get('activitylocation'),
             activityduration: formData.get('activityduration'),
-            activityprice: formData.get('activityprice')
+            activityprice: formData.get('activityprice'),
+            activityimage: formData.get('updatedActivityImage')
         };
         try {
             const response = await fetch(`/activities/${activityId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    
                 },
-                body: JSON.stringify(updatedActivityData)
+                body: updatedActivityData
             });
             if (response.ok) {
                 console.log('Activity updated successfully');
