@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fetch activity details when the page is loaded
     async function fetchActivityDetails(activityId) {
         try {
-            const response = await fetch(`/updateactivities/${activityId}`);
+            const response = await fetch(`/activities/${activityId}`);
             const activity = await response.json();
             displayActivityDetails(activity);
         } catch (error) {
