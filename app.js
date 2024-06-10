@@ -104,23 +104,18 @@ app.put('/activities/:id', async (req, res) => {
     // Begin transaction
     await client.query('BEGIN');
 
-    // Retrieve the current activity data from the database
-    const getActivityQuery = 'SELECT * FROM public.activity WHERE activityid = $1';
-    const getActivityResult = await client.query(getActivityQuery, [id]);
-    const updatedActivity = getActivityResult.rows[0];
-
-    if (!updatedActivityData) {
-      return res.status(404).send('Activity not found!');
-    }
-
-    // Update the activity data with the new values
-    const updateQuery = `
+    // Update the activity
+    const updateActivityText = `
       UPDATE public.activity
-      SET activityname = $1, activitylocation = $2, activityduration = $3, activityprice = $4, activityimage = $5
-      WHERE activityid = $6;
+      SET activityname = $1,
+          activitylocation = $2,
+          activityduration = $3,
+          activityprice = $4,
+          activityimage = $5
+      WHERE activityid = $6
     `;
-    const updateActivityValues = [updatedActivityData.activityname, updatedActivityData.activitylocation, updatedActivityData.activityduration, updatedActivityData.activityprice, updatedActivityData.activityimage, id];
-    await client.query(updateQuery, updateActivityValues);
+    const updateActivityValues = [activityname, activitylocation, activityduration, activityprice, activityimage, id];
+    await client.query(updateActivityText, updateActivityValues);
 
     // Commit transaction
     await client.query('COMMIT');
@@ -129,7 +124,7 @@ app.put('/activities/:id', async (req, res) => {
   } catch (err) {
     // Rollback transaction in case of error
     await client.query('ROLLBACK');
-    console.error('Error updating activity:', err);
+    console.error('Error updating activity:', err); // Detailed error logging
     res.status(500).send('Something went wrong!');
   } finally {
     // Release the client back to the pool
