@@ -5,10 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity Management System</title>
     <link rel="stylesheet" href="activity.css">
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>Activity Management System</h1>
+        <div id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <nav id="sideNav">
+            <ul>
+                <li>
+                    <a href="#">
+                        <img src="img/logo.jpg" alt="Logo" width="40" height="40">
+                        <span class="nav-item">Kem Tasik Biru</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-home"></i>
+                        <span class="nav-item">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-user"></i>
+                        <span class="nav-item">Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-box"></i>
+                        <span class="nav-item">Package</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-calendar-check"></i>
+                        <span class="nav-item">Booking</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-bicycle"></i>
+                        <span class="nav-item">Activity</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="nav-item">Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="nav-item">Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </header>
 
     <main>
@@ -47,5 +103,6 @@
     </main>
 
     <script src="activity.js"></script>
+    <script src="nav.js"></script>
 </body>
 </html>
