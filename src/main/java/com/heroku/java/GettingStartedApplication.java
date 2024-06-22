@@ -32,7 +32,7 @@ public class GettingStartedApplication {
 
     @GetMapping("/")
     public String index() {
-        return "index_logout";
+        return "index";
     }
 
     @GetMapping("/logoutViewRoom")
