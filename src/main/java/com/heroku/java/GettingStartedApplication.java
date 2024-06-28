@@ -35,9 +35,9 @@ public class GettingStartedApplication {
         return "index";
     }
 
-    @GetMapping("/logoutViewRoom")
-    public String logoutViewRoom() {
-        return "logoutViewRoom";
+    @GetMapping("/staffactivity")
+    public String staffactivity() {
+        return "staff/staffactivity";
     }
 
     @GetMapping("/index")

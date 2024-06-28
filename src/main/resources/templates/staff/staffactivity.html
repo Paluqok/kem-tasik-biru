@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Boxiocns CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+    <!-- Staff Base CSS -->
+    <link rel="stylesheet" th:href="@{stylesheets/css/base.css}">
+
+    <!-- Specific CSS -->
+    <link rel="stylesheet" th:href="@{stylesheets/css/staffnavbar.css}">
+    <link rel="stylesheet" th:href="@{stylesheets/css/staffactivity.css}">
+
+    <!-- Specific JS -->
+    <script th:src="@{stylesheets/js/staffactivity.js}"></script>
+</head>
+<body>
+    <header>
+        <!-- Navbar -->
+        <div class="sidebar close">
+          <div class="logo-details">
+            <i class='bx bxl-c-plus-plus'></i>
+            <span class="logo_name">KemTasikBiru</span>
+          </div>
+          <ul class="nav-links">
+            <li>
+              <a th:href="@{/index}">
+                <i class='bx bx-grid-alt' ></i>
+                <span class="link_name">Home</span>
+              </a>
+              <ul class="sub-menu blank">
+                <li><a class="link_name" th:href="@{/index}">Home</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#">
+                <i class='bx bx-pie-chart-alt-2' ></i>
+                <span class="link_name">Package</span>
+              </a>
+              <ul class="sub-menu blank">
+                <li><a class="link_name" href="#">Package</a></li>
+              </ul>
+            </li>
+            <li>
+              <a th:href="@{/staffactivity}">
+                <i class='bx bx-line-chart' ></i>
+                <span class="link_name">Activity</span>
+              </a>
+              <ul class="sub-menu blank">
+                <li><a class="link_name" th:href="@{/staffactivity}">Activity</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#">
+                <i class='bx bx-compass' ></i>
+                <span class="link_name">History</span>
+              </a>
+              <ul class="sub-menu blank">
+                <li><a class="link_name" href="#">History</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#">
+                <i class='bx bx-history'></i>
+                <span class="link_name">Profile</span>
+              </a>
+              <ul class="sub-menu blank">
+                <li><a class="link_name" href="#">Profile</a></li>
+              </ul>
+            </li>
+            <li>
+          <div class="profile-details">
+            <div class="profile-content">
+              <!--<img src="image/profile.jpg" alt="profileImg">-->
+            </div>
+            <div class="name-job">
+              <div class="profile_name">Log Out</div>
+            </div>
+            <i class='bx bx-log-out' ></i>
+          </div>
+        </li>
+      </ul>
+        </div>
+        <section class="home-section">
+          <div class="home-content">
+            <i class='bx bx-menu' ></i>
+          </div>
+        </section>
+        <!-- Navbar -->
+         
+      </header>
+
+      <main>
+        <h1>hi</h1>
+
+        <button id="createActivityBtn">Create Activity</button>
+
+        <section id="activityList">
+            <!-- Activity dynamic list -->
+        </section>
+
+        <div id="createActivityModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <!-- Create Activity Form -->
+                <form id="createActivityForm" action="/activities" method="post">
+                    <h2>Create Activity</h2>
+                    <label for="activityname">Activity Name:</label>
+                    <input type="text" id="activityname" name="activityname" required>
+
+                    <label for="activitylocation">Location:</label>
+                    <input type="text" id="activitylocation" name="activitylocation" required>
+
+                    <label for="activityduration">Duration:</label>
+                    <input type="text" id="activityduration" name="activityduration" required>
+
+                    <label for="activityprice">Price:</label>
+                    <input type="number" id="activityprice" name="activityprice" required>
+
+                    <label for="activityimage">Image:</label>
+                    <input type="file" id="activityimage" name="activityimage" accept="image/*" required>
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+
+      </main>
+
+
+
+    <!--<Script for Navbar>-->
+      <script>
+      let arrow = document.querySelectorAll(".arrow");
+      for (var i = 0; i < arrow.length; i++) {
+        arrow[i].addEventListener("click", (e)=>{
+       let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+       arrowParent.classList.toggle("showMenu");
+        });
+      }
+      let sidebar = document.querySelector(".sidebar");
+      let sidebarBtn = document.querySelector(".bx-menu");
+      console.log(sidebarBtn);
+      sidebarBtn.addEventListener("click", ()=>{
+        sidebar.classList.toggle("close");
+      });
+      </script>
+</body>
+</html>
