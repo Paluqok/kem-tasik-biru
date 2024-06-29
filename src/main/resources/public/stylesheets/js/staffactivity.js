@@ -29,21 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Form submitted');
 
         const formData = new FormData(createActivityForm);
-        const activityData = {
-            activityname: formData.get('activityname'),
-            activitylocation: formData.get('activitylocation'),
-            activityduration: formData.get('activityduration'),
-            activityprice: formData.get('activityprice'),
-            activityimage: formData.get('activityimage')
-        };
 
         try {
-            const response = await fetch('/activities', {
+            const response = await fetch('/createActivities', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(activityData)
+                body: formData
             });
 
             if (response.ok) {
