@@ -33,10 +33,11 @@
     background-color: #0056b3;
 }
 
-#activityList {
+.activity-list {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 60px; 
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .activity-card {
@@ -44,14 +45,35 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 20px;
-    margin: 10px;
-    width: calc(33.33% - 20px);
+    width: calc(33.33% - 40px);
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .activity-card img {
     max-width: 100%;
     height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }
+
+.activity-card h3 {
+    margin-bottom: 10px;
+}
+
+.activity-card button {
+    padding: 10px;
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.activity-card button:hover {
+    background-color: #0056b3;
+}
+
 
 .modal {
     display: none;

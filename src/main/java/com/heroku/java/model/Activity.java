@@ -8,6 +8,21 @@ public class Activity {
     private double activityPrice;
     private String activityImage;
 
+    // Default constructor
+    public Activity() {
+    }
+
+    // Parameterized constructor
+    public Activity(Long activityId, String activityName, String activityLocation, String activityDuration, double activityPrice, String activityImage) {
+        this.activityId = activityId;
+        this.activityName = activityName;
+        this.activityLocation = activityLocation;
+        this.activityDuration = activityDuration;
+        this.activityPrice = activityPrice;
+        this.activityImage = activityImage;
+    }
+
+    // Getters and setters
     public Long getActivityId() {
         return activityId;
     }

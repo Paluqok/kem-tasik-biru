@@ -1,16 +1,21 @@
 package com.heroku.java.controller;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
-
+import java.util.List;
+import java.sql.*;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,5 +84,57 @@ public class ActivityController {
         }
 
         return "redirect:/staffactivity"; // Return the created activity object
+    }
+
+    @GetMapping("/activities")
+    public List<Activity> getAllActivities() {
+        List<Activity> activities = new ArrayList<>();
+        String sql = "SELECT * FROM activity";
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Activity activity = new Activity(
+                        rs.getLong("activityid"),
+                        rs.getString("activityname"),
+                        rs.getString("activitylocation"),
+                        rs.getString("activityduration"),
+                        rs.getDouble("activityprice"),
+                        rs.getString("activityimage")
+                );
+                activities.add(activity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return activities;
+    }
+
+    @GetMapping("/activitylist/{id}")
+    public Activity getActivityById(@PathVariable Long id) {
+        Activity activity = null;
+        String sql = "SELECT * FROM activity WHERE activityid = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    activity = new Activity(
+                            rs.getLong("activityid"),
+                            rs.getString("activityname"),
+                            rs.getString("activitylocation"),
+                            rs.getString("activityduration"),
+                            rs.getDouble("activityprice"),
+                            rs.getString("activityimage")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (activity == null) {
+            throw new RuntimeException("Activity not found");
+        }
+        return activity;
     }
 }

@@ -98,7 +98,7 @@
 
         <button id="createActivityBtn">Create Activity</button>
 
-        <section id="activityList">
+        <section id="activityList" class="activity-list">
             <!-- Activity dynamic list -->
         </section>
 
@@ -148,6 +148,8 @@
         sidebar.classList.toggle("close");
       });
       </script>
+
+      <!--<Script for Activity CRUD>-->
       <script>
         document.addEventListener('DOMContentLoaded', function() {
           const createActivityBtn = document.getElementById('createActivityBtn');
@@ -201,6 +203,23 @@
               createActivityModal.style.display = 'none'; // Close the modal after submission
               createActivityForm.reset(); // Reset form fields if needed
           });
+
+          // Fetch and display activities
+          fetch('/activities')
+              .then(response => response.json())
+              .then(activities => {
+                  activities.forEach(activity => {
+                      const activityCard = document.createElement('div');
+                      activityCard.classList.add('activity-card');
+                      activityCard.innerHTML = `
+                          <img src="data:image/jpeg;base64,${activity.activityImage}" alt="${activity.activityName}">
+                          <h3>${activity.activityName}</h3>
+                          <button onclick="location.href='/staffdetailedactivity.html?id=${activity.activityId}'">More</button>
+                      `;
+                      activityList.appendChild(activityCard);
+                  });
+              })
+              .catch(error => console.error('Error fetching activities:', error));
   
       });
       </script>
