@@ -107,7 +107,7 @@
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <!-- Create Activity Form -->
-                <form id="createActivityForm" th:action="@{/createActivities}" modelAttribute="createActivities" method="post">
+                <form id="createActivityForm" th:action="@{/createActivities}" modelAttribute="createActivities" method="post" enctype="multipart/form-data">
                     <h2>Create Activity</h2>
                     <label for="activityname">Activity Name:</label>
                     <input type="text" id="activityname" name="activityname" required>
