@@ -1,10 +1,6 @@
 package com.heroku.java.controller;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -30,6 +26,11 @@ public class ActivityController {
     @Autowired
     public ActivityController(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    @GetMapping("/staffactivity")
+    public String staffactivity() {
+        return "staff/staffactivity";
     }
 
     @PostMapping("/createActivities")
