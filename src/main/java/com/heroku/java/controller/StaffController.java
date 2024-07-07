@@ -51,12 +51,12 @@ public class StaffController {
 
             System.out.println("Received staff details:");
             System.out.println("Name: " + staff.getStaffName());
-            System.out.println("Location: " + staff.getStaffEmail());
-            System.out.println("Duration: " + staff.getStaffAddress());
-            System.out.println("Price: " + staff.getStaffPhoneNo());
-            System.out.println("Image: " + staff.getStaffPassword());
+            System.out.println("Email: " + staff.getStaffEmail());
+            System.out.println("Address: " + staff.getStaffAddress());
+            System.out.println("Phone No: " + staff.getStaffPhoneNo());
+            System.out.println("Password: " + staff.getStaffPassword());
 
-            String staffSql = "INSERT INTO public.staff(staffname, stafflocation, staffduration, staffprice, staffimage) VALUES (?, ?, ?, ?, ?) RETURNING staffid";
+            String staffSql = "INSERT INTO public.staff(staffname, staffemail, staffaddress, staffphoneno, staffpassword) VALUES (?, ?, ?, ?, ?) RETURNING staffid";
 
             try (PreparedStatement statement = connection.prepareStatement(staffSql)) {
                 statement.setString(1, staff.getStaffName());
