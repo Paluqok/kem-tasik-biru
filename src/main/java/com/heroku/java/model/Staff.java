@@ -1,7 +1,7 @@
 package com.heroku.java.model;
 
 public class Staff {
-	private int staffId;
+	private Long staffId;
 	private String staffName;
 	private String staffEmail;
 	private String staffAddress;
@@ -11,7 +11,7 @@ public class Staff {
 	
 	public Staff() {}
 	
-	public Staff(int staffId,String staffName,String staffEmail,String staffAddress,String staffPhoneNo,String staffPassword,Integer managerId) {
+	public Staff(Long staffId,String staffName,String staffEmail,String staffAddress,String staffPhoneNo,String staffPassword,Integer managerId) {
 		this.staffId=staffId;
 		this.staffName=staffName;
 		this.staffEmail=staffEmail;
@@ -22,10 +22,10 @@ public class Staff {
 	}
 	
 	
-	public int getStaffId() {
+	public Long getStaffId() {
 		return staffId;
 	}
-	public void setStaffId(int staffId) {
+	public void setStaffId(Long staffId) {
 		this.staffId = staffId;
 	}
 	public String getStaffName() {

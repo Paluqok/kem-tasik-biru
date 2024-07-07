@@ -63,7 +63,7 @@
 <body>
     <div class="container">
         <h1>Staff Sign Up</h1>
-        <form th:action="@{/createAccountStaff}" method="post" onsubmit="return validateEmailAndPhoneAndPassword()">
+        <form th:action="@{/createAccountStaff}" modelAttribute="createAccountStaff" method="post" onsubmit="return validateEmailAndPhoneAndPassword()">
             <input type="hidden" name="action" value="signUp">
             <div class="form-group">
                 <label for="staffName" class="details">Name:</label>
