@@ -67,10 +67,6 @@ public class GettingStartedApplication {
         return "staff/staffHome";
     }
 
-    @GetMapping("/staffLogin")
-    public String staffLogin() {
-        return "staff/staffLogin";
-    }
 
     @GetMapping("/staffAddRoom")
     public String staffAddRoom(HttpSession session) {
