@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.sql.*;
+
+import javax.security.auth.login.LoginException;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.heroku.java.model.Staff;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class StaffController {
@@ -81,8 +86,54 @@ public class StaffController {
             throw new RuntimeException("Failed to insert staff", e);
         }
 
-        return "redirect:/staffstaff"; // Return the created staff object
+        return "redirect:/staff/staffLogin"; // Return the created staff object
     }
+
+    @GetMapping("/staffLogin")
+    public String staffLogin() {
+        return "Staff/StaffLogin";
+    }
+
+    @PostMapping("/staffLogins")
+    public String staffLogins(HttpSession session,@RequestParam("staffEmail") String staffEmail, @RequestParam("staffPassword") String staffPassword,Staff staff) throws LoginException, SQLException{
+        try {
+            try (Connection conn = dataSource.getConnection()) {
+                String sql = "SELECT staffid,staffname,staffemail,staffphoneno,staffaddress,staffpassword,managerid FROM public.staff WHERE staffemail=?";
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1,staffEmail);
+                
+                ResultSet resultSet = statement.executeQuery();
+                if(resultSet.next()) {
+                    staff = new Staff();
+                    staff.setStaffId(resultSet.getLong("staffid"));
+                    staff.setStaffName(resultSet.getString("staffname"));
+                    staff.setStaffEmail(resultSet.getString("staffemail"));
+                    staff.setStaffPhoneNo(resultSet.getString("staffphoneno"));
+                    staff.setStaffAddress(resultSet.getString("staffaddress"));
+                    staff.setStaffPassword(resultSet.getString("staffpassword"));
+                    
+                    if(staff.getStaffEmail().equals(staffEmail) && staff.getStaffPassword().equals(staffPassword)) {
+                   
+                    session.setAttribute("staffname", staff.getStaffName());
+                    session.setAttribute("staffid", staff.getStaffId());
+                    
+                    return "redirect:/index";
+                   }
+                   
+                }
+                     conn.close();
+                     return "redirect:/staff/staffLogin";
+
+                }
+
+             
+    }catch(SQLException e){
+        return "redirect:/staff/staffLogin";
+    }
+   
+}
+
+
     
 }
 
