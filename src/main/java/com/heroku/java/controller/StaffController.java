@@ -132,39 +132,90 @@ public class StaffController {
         }
    
     }
-
-    @GetMapping("/staffProfile")
-    public String getStaffProfile(HttpSession session, Model model) {
+    @GetMapping("/homeStaff")
+    public String homeStaff(HttpSession session, Model model) {
         Long staffId = (Long) session.getAttribute("staffid");
         if (staffId == null) {
             return "redirect:/staffLogin";
         }
+        Staff staff = (Staff) session.getAttribute("staff");
+        model.addAttribute("staff", staff);
+        return "staff/homeStaff";
+    }
 
-        Staff staff = null;
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "SELECT staffid, staffname, staffemail, staffphoneno, staffaddress, managerid FROM public.staff WHERE staffid = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setLong(1, staffId);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        staff = new Staff();
-                        staff.setStaffId(resultSet.getLong("staffid"));
-                        staff.setStaffName(resultSet.getString("staffname"));
-                        staff.setStaffEmail(resultSet.getString("staffemail"));
-                        staff.setStaffPhoneNo(resultSet.getString("staffphoneno"));
-                        staff.setStaffAddress(resultSet.getString("staffaddress"));
-                        staff.setManagerId(resultSet.getInt("managerid"));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "redirect:/error";
+    @GetMapping("/staffProfile")
+    public String staffProfile(HttpSession session, Model model) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
         }
-
         model.addAttribute("staff", staff);
         return "staff/staffProfile";
     }
+
+    @PostMapping("/updateStaff")
+    public String updateStaff(HttpSession session,
+                              @RequestParam("staffName") String staffName,
+                              @RequestParam("staffEmail") String staffEmail,
+                              @RequestParam("staffAddress") String staffAddress,
+                              @RequestParam("staffPhoneNo") String staffPhoneNo,
+                              @RequestParam("staffPassword") String staffPassword) throws IOException {
+        
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+
+        staff.setStaffName(staffName);
+        staff.setStaffEmail(staffEmail);
+        staff.setStaffAddress(staffAddress);
+        staff.setStaffPhoneNo(staffPhoneNo);
+        staff.setStaffPassword(staffPassword);
+
+        try (Connection connection = dataSource.getConnection()) {
+            String staffSql = "UPDATE public.staff SET staffname = ?, staffemail = ?, staffaddress = ?, staffphoneno = ?, staffpassword = ? WHERE staffid = ?";
+
+            try (PreparedStatement statement = connection.prepareStatement(staffSql)) {
+                statement.setString(1, staff.getStaffName());
+                statement.setString(2, staff.getStaffEmail());
+                statement.setString(3, staff.getStaffAddress());
+                statement.setString(4, staff.getStaffPhoneNo());
+                statement.setString(5, staff.getStaffPassword());
+                statement.setLong(6, staff.getStaffId());
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to update staff", e);
+        }
+
+        session.setAttribute("staff", staff);
+        return "redirect:/staffProfile";
+    }
+
+    @GetMapping("/deleteStaff")
+    public String deleteStaff(HttpSession session) throws IOException {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+
+        try (Connection connection = dataSource.getConnection()) {
+            String staffSql = "DELETE FROM public.staff WHERE staffid = ?";
+
+            try (PreparedStatement statement = connection.prepareStatement(staffSql)) {
+                statement.setLong(1, staff.getStaffId());
+                statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to delete staff", e);
+        }
+
+        session.invalidate();
+        return "redirect:/staffLogin";
+    }
+    
 
 
     
