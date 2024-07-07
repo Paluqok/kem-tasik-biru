@@ -91,7 +91,7 @@ public class StaffController {
 
     @GetMapping("/staffLogin")
     public String staffLogin() {
-        return "staff/staffLogin";
+        return "/staff/staffLogin";
     }
 
     @PostMapping("/loginStaff")
@@ -122,7 +122,7 @@ public class StaffController {
                    
                 }
                      conn.close();
-                     return "redirect:staff/staffLogin";
+                     return "redirect:/staff/staffLogin";
 
                 }
 
