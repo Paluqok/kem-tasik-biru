@@ -134,14 +134,19 @@ public class StaffController {
     }
     @GetMapping("/homeStaff")
     public String homeStaff(HttpSession session, Model model) {
-        Long staffId = (Long) session.getAttribute("staffid");
-        if (staffId == null) {
-            return "redirect:/staffLogin";
-        }
-        Staff staff = (Staff) session.getAttribute("staff");
-        model.addAttribute("staff", staff);
-        return "/homeStaff";
+    Long staffId = (Long) session.getAttribute("staffid");
+    if (staffId == null) {
+        return "redirect:/staffLogin";
     }
+
+    Staff staff = (Staff) session.getAttribute("staff");
+    if (staff == null) {
+        return "redirect:/staffLogin";
+    }
+
+    model.addAttribute("staff", staff);
+    return "/homeStaff";
+}
 
     @GetMapping("/staffProfile")
     public String staffProfile(HttpSession session, Model model) {
