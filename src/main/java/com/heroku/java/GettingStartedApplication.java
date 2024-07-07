@@ -35,6 +35,17 @@ public class GettingStartedApplication {
         return "index";
     }
 
+    @GetMapping("/homeStaff")
+    public String homeStaff(HttpSession session, Model model) {
+    Long staffId = (Long) session.getAttribute("staffid");
+    if (staffId == null) {
+        return "redirect:/login"; // Redirect to login if no staffId in session
+    }
+    model.addAttribute("staffId", staffId);
+    return "homeStaff"; // Return view name, assuming you have a view resolver configured
+    }
+
+
 
 
     @GetMapping("/index")
