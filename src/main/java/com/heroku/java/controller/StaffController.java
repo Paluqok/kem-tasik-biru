@@ -91,7 +91,7 @@ public class StaffController {
 
     @GetMapping("/staffLogin")
     public String staffLogin() {
-        return "Staff/StaffLogin";
+        return "/staff/staffLogin";
     }
 
     @PostMapping("/staffLogins")
