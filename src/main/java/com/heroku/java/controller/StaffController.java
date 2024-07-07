@@ -86,7 +86,7 @@ public class StaffController {
             throw new RuntimeException("Failed to insert staff", e);
         }
 
-        return "redirect:staff/staffLogin"; // Return the created staff object
+        return "redirect:/staff/staffLogin"; // Return the created staff object
     }
 
     @GetMapping("/staffLogin")
@@ -122,7 +122,7 @@ public class StaffController {
                    
                 }
                      conn.close();
-                     return "redirect:/staff/staffLogin";
+                     return "redirect:staff/staffLogin";
 
                 }
 
