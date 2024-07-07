@@ -140,7 +140,7 @@ public class StaffController {
         }
         Staff staff = (Staff) session.getAttribute("staff");
         model.addAttribute("staff", staff);
-        return "staff/homeStaff";
+        return "/homeStaff";
     }
 
     @GetMapping("/staffProfile")
