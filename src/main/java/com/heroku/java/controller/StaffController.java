@@ -11,13 +11,13 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
+
 
 import com.heroku.java.model.Staff;
 
@@ -117,7 +117,7 @@ public class StaffController {
                     session.setAttribute("staffname", staff.getStaffName());
                     session.setAttribute("staffid", staff.getStaffId());
                     
-                    return "redirect:/index";
+                    return "redirect:/homeStaff";
                    }
                    
                 }
@@ -127,11 +127,44 @@ public class StaffController {
                 }
 
              
-    }catch(SQLException e){
-        return "redirect:/error";
-    }
+        }catch(SQLException e){
+            return "redirect:/error";
+        }
    
-}
+    }
+
+    @GetMapping("/staffProfile")
+    public String getStaffProfile(HttpSession session, Model model) {
+        Long staffId = (Long) session.getAttribute("staffid");
+        if (staffId == null) {
+            return "redirect:/staffLogin";
+        }
+
+        Staff staff = null;
+        try (Connection connection = dataSource.getConnection()) {
+            String sql = "SELECT staffid, staffname, staffemail, staffphoneno, staffaddress, managerid FROM public.staff WHERE staffid = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setLong(1, staffId);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        staff = new Staff();
+                        staff.setStaffId(resultSet.getLong("staffid"));
+                        staff.setStaffName(resultSet.getString("staffname"));
+                        staff.setStaffEmail(resultSet.getString("staffemail"));
+                        staff.setStaffPhoneNo(resultSet.getString("staffphoneno"));
+                        staff.setStaffAddress(resultSet.getString("staffaddress"));
+                        staff.setManagerId(resultSet.getInt("managerid"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "redirect:/error";
+        }
+
+        model.addAttribute("staff", staff);
+        return "staff/staffProfile";
+    }
 
 
     
