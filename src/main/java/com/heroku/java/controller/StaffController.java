@@ -89,50 +89,7 @@ public class StaffController {
         return "redirect:/staff/staffLogin"; // Return the created staff object
     }
 
-    @GetMapping("/staffLogin")
-    public String staffLogin() {
-        return "/staff/staffLogin";
-    }
-
-    @PostMapping("/loginStaff")
-    public String staffLogins(HttpSession session,@RequestParam("staffEmail") String staffEmail, @RequestParam("staffPassword") String staffPassword,Staff staff) throws LoginException, SQLException{
-        try {
-            try (Connection conn = dataSource.getConnection()) {
-                String sql = "SELECT staffid,staffname,staffemail,staffphoneno,staffaddress,staffpassword,managerid FROM public.staff WHERE staffemail=?";
-                PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setString(1,staffEmail);
-                
-                ResultSet resultSet = statement.executeQuery();
-                if(resultSet.next()) {
-                    staff = new Staff();
-                    staff.setStaffId(resultSet.getLong("staffid"));
-                    staff.setStaffName(resultSet.getString("staffname"));
-                    staff.setStaffEmail(resultSet.getString("staffemail"));
-                    staff.setStaffPhoneNo(resultSet.getString("staffphoneno"));
-                    staff.setStaffAddress(resultSet.getString("staffaddress"));
-                    staff.setStaffPassword(resultSet.getString("staffpassword"));
-                    
-                    if(staff.getStaffEmail().equals(staffEmail) && staff.getStaffPassword().equals(staffPassword)) {
-                   
-                    session.setAttribute("staffname", staff.getStaffName());
-                    session.setAttribute("staffid", staff.getStaffId());
-                    
-                    return "redirect:/index";
-                   }
-                   
-                }
-                     conn.close();
-                     return "redirect:/staff/staffLogin";
-
-                }
-
-             
-    }catch(SQLException e){
-        return "redirect:/staff/Login";
-    }
-   
-}
-
+    
 
     
 }
