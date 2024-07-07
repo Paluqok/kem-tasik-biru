@@ -4,19 +4,19 @@ public class Staff {
 	private Long staffId;
 	private String staffName;
 	private String staffEmail;
-	private String staffAddress;
 	private String staffPhoneNo;
+	private String staffAddress;
 	private String staffPassword;
 	private Integer managerId;
 	
 	public Staff() {}
 	
-	public Staff(Long staffId,String staffName,String staffEmail,String staffAddress,String staffPhoneNo,String staffPassword,Integer managerId) {
+	public Staff(Long staffId,String staffName,String staffEmail,String staffPhoneNo,String staffAddress,String staffPassword,Integer managerId) {
 		this.staffId=staffId;
 		this.staffName=staffName;
 		this.staffEmail=staffEmail;
-		this.staffAddress=staffAddress;
 		this.staffPhoneNo=staffPhoneNo;
+		this.staffAddress=staffAddress;
 		this.staffPassword=staffPassword;
 		this.managerId=managerId;
 	}
@@ -40,17 +40,17 @@ public class Staff {
 	public void setStaffEmail(String staffEmail) {
 		this.staffEmail = staffEmail;
 	}
-	public String getStaffAddress() {
-		return staffAddress;
-	}
-	public void setStaffAddress(String staffAddress) {
-		this.staffAddress = staffAddress;
-	}
 	public String getStaffPhoneNo() {
 		return staffPhoneNo;
 	}
 	public void setStaffPhoneNo(String staffPhoneNo) {
 		this.staffPhoneNo = staffPhoneNo;
+	}
+	public String getStaffAddress() {
+		return staffAddress;
+	}
+	public void setStaffAddress(String staffAddress) {
+		this.staffAddress = staffAddress;
 	}
 	public String getStaffPassword() {
 		return staffPassword;
@@ -66,5 +66,6 @@ public class Staff {
 	public void setManagerId(Integer managerId) {
 		this.managerId = managerId;
 	}
+	
 	
 }
