@@ -122,7 +122,7 @@ public class StaffController {
                    
                 }
                      conn.close();
-                     return "redirect:staff/staffLogin";
+                     return "redirect:/staff/staffLogin";
 
                 }
 
