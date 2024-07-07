@@ -28,7 +28,7 @@ public class StaffController {
         this.dataSource = dataSource;
     }
      
-    @GetMapping("/createAccountStaff")
+    @GetMapping("/staffSignUp")
     public String createAccountStaff(){
         return "staff/staffSignUp";
     }
