@@ -90,51 +90,49 @@ public class StaffController {
     }
 
     @GetMapping("/staffLogin")
-    public String logInStaffAccount() {
-        return "staff/staffLogin";
+    public String staffLogin() {
+        return "/staff/staffLogin";
     }
 
-    @PostMapping("/processStaffLogin")
-    public ModelAndView loginStaff(@RequestParam("staffEmail") String staffEmail,
-                                   @RequestParam("staffPassword") String staffPassword,
-                                   HttpSession session) {
-        Staff staff = null;
-        try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT * FROM staff WHERE staffEmail = ? AND staffPassword = ?";
-            try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setString(1, staffEmail);
-                statement.setString(2, staffPassword);
-
-                try (ResultSet rs = statement.executeQuery()) {
-                    if (rs.next()) {
-                        staff = new Staff();
-                        staff.setStaffId(rs.getLong("staffId"));
-                        staff.setStaffName(rs.getString("staffName"));
-                        staff.setStaffEmail(rs.getString("staffEmail"));
-                        staff.setStaffAddress(rs.getString("staffAddress"));
-                        staff.setStaffPhoneNo(rs.getString("staffPhoneNo"));
-                        staff.setStaffPassword(rs.getString("staffPassword"));
-                        staff.setManagerId(rs.getInt("managerId"));
-
-                        session.setAttribute("staff", staff);
-                    }
+    @PostMapping("/loginStaff")
+    public String staffLogins(HttpSession session,@RequestParam("staffEmail") String staffEmail, @RequestParam("staffPassword") String staffPassword,Staff staff) throws LoginException, SQLException{
+        try {
+            try (Connection conn = dataSource.getConnection()) {
+                String sql = "SELECT staffid,staffname,staffemail,staffphoneno,staffaddress,staffpassword,managerid FROM public.staff WHERE staffemail=?";
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1,staffEmail);
+                
+                ResultSet resultSet = statement.executeQuery();
+                if(resultSet.next()) {
+                    staff = new Staff();
+                    staff.setStaffId(resultSet.getLong("staffid"));
+                    staff.setStaffName(resultSet.getString("staffname"));
+                    staff.setStaffEmail(resultSet.getString("staffemail"));
+                    staff.setStaffPhoneNo(resultSet.getString("staffphoneno"));
+                    staff.setStaffAddress(resultSet.getString("staffaddress"));
+                    staff.setStaffPassword(resultSet.getString("staffpassword"));
+                    
+                    if(staff.getStaffEmail().equals(staffEmail) && staff.getStaffPassword().equals(staffPassword)) {
+                   
+                    session.setAttribute("staffname", staff.getStaffName());
+                    session.setAttribute("staffid", staff.getStaffId());
+                    
+                    return "redirect:/index";
+                   }
+                   
                 }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            ModelAndView modelAndView = new ModelAndView("staff/staffLogin");
-            modelAndView.addObject("error", "An error occurred while processing your request. Please try again.");
-            return modelAndView;
-        }
+                     conn.close();
+                     return "redirect:/staff/staffLogin";
 
-        if (staff != null) {
-            return new ModelAndView("redirect:/staffHome");
-        } else {
-            ModelAndView modelAndView = new ModelAndView("staff/staffLogin");
-            modelAndView.addObject("error", "Invalid email or password");
-            return modelAndView;
-        }
+                }
+
+             
+    }catch(SQLException e){
+        return "redirect:/staff/Login";
     }
+   
+}
+
 
     
 }
