@@ -61,25 +61,7 @@ public class GettingStartedApplication {
 
     // for staff
 
-    @GetMapping("/staffHome")
-    public String staffHome(@RequestParam(name = "success", required = false) Boolean success, HttpSession session) {
-        String staffICNumber = (String) session.getAttribute("staffICNumber") ;
-        return "staff/staffHome";
-    }
-
-
-    @GetMapping("/staffAddRoom")
-    public String staffAddRoom(HttpSession session) {
-    String staffICNumber = (String) session.getAttribute("staffICNumber") ;
-    return "staff/staffAddRoom";
-}
-
-@GetMapping("/staffGenerateReport")
-public String staffGenerateReport(HttpSession session) {
-    String staffICNumber = (String) session.getAttribute("staffICNumber") ;
-    return "staff/staffGenerateReport";
-}
-
+   
 // for manager
 
 // @GetMapping("/managerHome")
