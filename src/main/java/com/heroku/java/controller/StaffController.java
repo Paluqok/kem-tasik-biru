@@ -94,7 +94,7 @@ public class StaffController {
         return "/staff/staffLogin";
     }
 
-    @PostMapping("/staffLogins")
+    @PostMapping("/staffLogIn")
     public String staffLogins(HttpSession session,@RequestParam("staffEmail") String staffEmail, @RequestParam("staffPassword") String staffPassword,Staff staff) throws LoginException, SQLException{
         try {
             try (Connection conn = dataSource.getConnection()) {
