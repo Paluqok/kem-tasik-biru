@@ -35,10 +35,7 @@ public class GettingStartedApplication {
         return "index";
     }
 
-    @GetMapping("/staffactivity")
-    public String staffactivity() {
-        return "staff/staffactivity";
-    }
+
 
     @GetMapping("/index")
     public String index1(@RequestParam(name = "success", required = false) Boolean success, HttpSession session) {
