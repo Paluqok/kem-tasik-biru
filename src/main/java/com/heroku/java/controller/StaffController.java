@@ -128,7 +128,7 @@ public class StaffController {
 
              
     }catch(SQLException e){
-        return "redirect:/staff/Login";
+        return "redirect:/error";
     }
    
 }
