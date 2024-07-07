@@ -9,6 +9,7 @@ import java.sql.*;
 import javax.security.auth.login.LoginException;
 import javax.sql.DataSource;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.heroku.java.model.Staff;
 
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class StaffController {
 
+    private static final Logger logger = LoggerFactory.getLogger(StaffController.class);
     private final DataSource dataSource;
 
     @Autowired
@@ -95,58 +99,67 @@ public class StaffController {
     }
 
     @PostMapping("/loginStaff")
-    public String staffLogins(HttpSession session,@RequestParam("staffEmail") String staffEmail, @RequestParam("staffPassword") String staffPassword,Staff staff) throws LoginException, SQLException{
-        try {
-            try (Connection conn = dataSource.getConnection()) {
-                String sql = "SELECT staffid,staffname,staffemail,staffphoneno,staffaddress,staffpassword,managerid FROM public.staff WHERE staffemail=?";
-                PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setString(1,staffEmail);
-                
-                ResultSet resultSet = statement.executeQuery();
-                if(resultSet.next()) {
-                    staff = new Staff();
-                    staff.setStaffId(resultSet.getLong("staffid"));
-                    staff.setStaffName(resultSet.getString("staffname"));
-                    staff.setStaffEmail(resultSet.getString("staffemail"));
-                    staff.setStaffPhoneNo(resultSet.getString("staffphoneno"));
-                    staff.setStaffAddress(resultSet.getString("staffaddress"));
-                    staff.setStaffPassword(resultSet.getString("staffpassword"));
-                    
-                    if(staff.getStaffEmail().equals(staffEmail) && staff.getStaffPassword().equals(staffPassword)) {
-                   
-                    session.setAttribute("staffname", staff.getStaffName());
-                    session.setAttribute("staffid", staff.getStaffId());
-                    
-                    return "redirect:/homeStaff";
-                   }
-                   
-                }
-                     conn.close();
-                     return "redirect:/staffLogin";
+    public String staffLogins(HttpSession session,
+                              @RequestParam("staffEmail") String staffEmail,
+                              @RequestParam("staffPassword") String staffPassword) throws LoginException {
 
-                }
+        logger.info("Attempting to log in staff with email: {}", staffEmail);
 
-             
-        }catch(SQLException e){
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "SELECT staffid, staffname, staffemail, staffphoneno, staffaddress, staffpassword FROM public.staff WHERE staffemail = ?";
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, staffEmail);
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        Staff staff = new Staff();
+                        staff.setStaffId(resultSet.getLong("staffid"));
+                        staff.setStaffName(resultSet.getString("staffname"));
+                        staff.setStaffEmail(resultSet.getString("staffemail"));
+                        staff.setStaffPhoneNo(resultSet.getString("staffphoneno"));
+                        staff.setStaffAddress(resultSet.getString("staffaddress"));
+                        staff.setStaffPassword(resultSet.getString("staffpassword"));
+
+                        logger.info("Staff found: {}", staff.getStaffName());
+
+                        if (staff.getStaffPassword().equals(staffPassword)) {
+                            logger.info("Password matches for staff: {}", staff.getStaffName());
+                            session.setAttribute("staffname", staff.getStaffName());
+                            session.setAttribute("staffid", staff.getStaffId());
+                            session.setAttribute("staff", staff);
+                            return "redirect:/homeStaff";
+                        } else {
+                            logger.warn("Password does not match for staff: {}", staff.getStaffName());
+                        }
+                    } else {
+                        logger.warn("No staff found with email: {}", staffEmail);
+                    }
+                }
+            }
+            return "redirect:/staffLogin";
+        } catch (SQLException e) {
+            logger.error("Error during staff login", e);
             return "redirect:/error";
         }
-   
     }
+
     @GetMapping("/homeStaff")
     public String homeStaff(HttpSession session, Model model) {
-    Long staffId = (Long) session.getAttribute("staffid");
-    if (staffId == null) {
-        return "redirect:/staffLogin";
-    }
+        Long staffId = (Long) session.getAttribute("staffid");
+        if (staffId == null) {
+            logger.warn("staffId is null in session");
+            return "redirect:/staffLogin";
+        }
 
-    Staff staff = (Staff) session.getAttribute("staff");
-    if (staff == null) {
-        return "redirect:/staffLogin";
-    }
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            logger.warn("staff is null in session");
+            return "redirect:/staffLogin";
+        }
 
-    model.addAttribute("staff", staff);
-    return "/homeStaff";
-}
+        model.addAttribute("staff", staff);
+        return "staff/homeStaff";
+    }
 
     @GetMapping("/staffProfile")
     public String staffProfile(HttpSession session, Model model) {
@@ -165,7 +178,7 @@ public class StaffController {
                               @RequestParam("staffAddress") String staffAddress,
                               @RequestParam("staffPhoneNo") String staffPhoneNo,
                               @RequestParam("staffPassword") String staffPassword) throws IOException {
-        
+
         Staff staff = (Staff) session.getAttribute("staff");
         if (staff == null) {
             return "redirect:/staffLogin";
@@ -190,7 +203,7 @@ public class StaffController {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to update staff", e);
             throw new RuntimeException("Failed to update staff", e);
         }
 
@@ -213,7 +226,7 @@ public class StaffController {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to delete staff", e);
             throw new RuntimeException("Failed to delete staff", e);
         }
 
