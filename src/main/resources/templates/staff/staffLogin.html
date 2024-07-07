@@ -149,7 +149,7 @@
             <a href="custLogin.jsp">Customer Login</a>
         </div>
         <h1>Staff Login</h1>
-        <form th:action="@{/staffLogIn}" modelAttribute="staffLogIn" th:objects = "${staffLogIn}" method="post">
+        <form th:action="@{/loginStaff}" modelAttribute="loginStaff" th:objects = "${loginStaff}" method="post">
             <input type="hidden" name="action" value="login">
             <div class="form-group">
                 <label for="staffEmail">Email:</label>
