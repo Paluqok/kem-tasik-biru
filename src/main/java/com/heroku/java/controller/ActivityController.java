@@ -93,7 +93,7 @@ public class ActivityController {
         }
     }
 
-    String sql = "INSERT INTO activity(activityid, activityname, activityprice, activityduration, activityimage) VALUES (activity_seq.NEXTVAL, ?, ?, ?, ?)";
+    String sql = "INSERT INTO public.activity(activityid, activityname, activityprice, activityduration, activityimage) VALUES (activity_seq.NEXTVAL, ?, ?, ?, ?)";
     try (Connection conn = dataSource.getConnection()) {
         conn.setAutoCommit(false);
         try (PreparedStatement statement = conn.prepareStatement(sql, new String[] {"activityid"})) {
@@ -120,7 +120,7 @@ public class ActivityController {
                             wetActivity.setActivityImage(activityImagePath);
                             wetActivity.setActivityEquipment(equipment);
 
-                            String wetSql = "INSERT INTO wet(activityid, activityequipment) VALUES (?, ?)";
+                            String wetSql = "INSERT INTO public.wet(activityid, activityequipment) VALUES (?, ?)";
                             try (PreparedStatement wetStatement = conn.prepareStatement(wetSql)) {
                                 wetStatement.setLong(1, wetActivity.getActivityId());
                                 wetStatement.setString(2, wetActivity.getActivityEquipment());
@@ -136,7 +136,7 @@ public class ActivityController {
                             dryActivity.setActivityImage(activityImagePath);
                             dryActivity.setActivityLocation(location);
 
-                            String drySql = "INSERT INTO dry(activityid, activitylocation) VALUES (?, ?)";
+                            String drySql = "INSERT INTO public.dry(activityid, activitylocation) VALUES (?, ?)";
                             try (PreparedStatement dryStatement = conn.prepareStatement(drySql)) {
                                 dryStatement.setLong(1, dryActivity.getActivityId());
                                 dryStatement.setString(2, dryActivity.getActivityLocation());
