@@ -82,7 +82,7 @@ public class ActivityController {
         // Handle file upload
     String activityImagePath = null;
     if (!activityImage.isEmpty()) {
-        String uploadDirectory = "/path/to/upload/directory/"; // Define this directory for saving the image
+        String uploadDirectory = "D:\\kem-tasik-biru\\src\\main\\resouces\\uploaded_images\\"; // Define this directory for saving the image
         try {
             Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
             Files.write(filePath, activityImage.getBytes());
