@@ -34,7 +34,7 @@ public class CustomerController {
      
     @GetMapping("/custSignUp")
     public String createCustomerAccount(){
-        return "cust/custSignUp";
+        return "customer/custSignUp";
     }
 
     @PostMapping("/createAccountCustomer")
@@ -60,7 +60,7 @@ public class CustomerController {
             System.out.println("Phone No: " + cust.getCustPhoneNo());
             System.out.println("Password: " + cust.getCustPassword());
 
-            String custSql = "INSERT INTO public.cust(custname, custemail, custaddress, custphoneno, custpassword) VALUES (?, ?, ?, ?, ?) RETURNING custid";
+            String custSql = "INSERT INTO public.customer(custname, custemail, custaddress, custphoneno, custpassword) VALUES (?, ?, ?, ?, ?) RETURNING custid";
 
             try (PreparedStatement statement = connection.prepareStatement(custSql)) {
                 statement.setString(1, cust.getCustName());
@@ -90,7 +90,7 @@ public class CustomerController {
 
     @GetMapping("/custLogin")
     public String custLogin() {
-        return "cust/custLogin";
+        return "customer/custLogin";
     }
 
     @PostMapping("/loginCustomer")
@@ -101,7 +101,7 @@ public class CustomerController {
         logger.info("Attempting to log in cust with email: {}", custEmail);
 
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT custid, custname, custemail, custphoneno, custaddress, custpassword FROM public.cust WHERE custemail = ?";
+            String sql = "SELECT custid, custname, custemail, custphoneno, custaddress, custpassword FROM public.customer WHERE custemail = ?";
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setString(1, custEmail);
 
@@ -163,7 +163,7 @@ public class CustomerController {
             return "redirect:/custLogin";
         }
         model.addAttribute("cust", cust);
-        return "cust/custProfile";
+        return "customer/custProfile";
     }
 
     // Serve the update form with current data
@@ -174,7 +174,7 @@ public String showUpdateForm(HttpSession session, Model model) {
         return "redirect:/custLogin";
     }
     model.addAttribute("cust", cust);
-    return "cust/custUpdate";
+    return "customer/custUpdate";
 }
 
 // Process the update form
@@ -218,7 +218,7 @@ public String updateCustomer(
 
     // Save the updated cust object
     try (Connection connection = dataSource.getConnection()) {
-        String custSql = "UPDATE public.cust SET custname = ?, custemail = ?, custaddress = ?, custphoneno = ?, custpassword = ? WHERE custid = ?";
+        String custSql = "UPDATE public.customer SET custname = ?, custemail = ?, custaddress = ?, custphoneno = ?, custpassword = ? WHERE custid = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(custSql)) {
             statement.setString(1, currentCustomer.getCustName());
@@ -248,7 +248,7 @@ public String deleteCustomer(HttpSession session) {
     }
 
     try (Connection connection = dataSource.getConnection()) {
-        String custSql = "DELETE FROM public.cust WHERE custid = ?";
+        String custSql = "DELETE FROM public.customer WHERE custid = ?";
         try (PreparedStatement statement = connection.prepareStatement(custSql)) {
             statement.setLong(1, custId);
             statement.executeUpdate();
