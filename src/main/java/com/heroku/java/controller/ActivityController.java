@@ -80,90 +80,75 @@ public class ActivityController {
         }
 
         // Handle file upload
-    String activityImagePath = null;
-    if (!activityImage.isEmpty()) {
-        String uploadDirectory = "D:\\kem-tasik-biru\\src\\main\\resouces\\uploaded_images\\"; // Define this directory for saving the image
-        try {
-            Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
-            Files.write(filePath, activityImage.getBytes());
-            activityImagePath = filePath.toString(); // Save the path of the uploaded image
-        } catch (IOException e) {
+        String activityImagePath = null;
+        if (!activityImage.isEmpty()) {
+            String uploadDirectory = "D:\\kem-tasik-biru\\src\\main\\resources\\uploaded_images\\"; // Define this directory for saving the image
+            try {
+                Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
+                Files.write(filePath, activityImage.getBytes());
+                activityImagePath = activityImage.getOriginalFilename(); // Save just the filename or relative path
+            } catch (IOException e) {
             e.printStackTrace();
             // Handle the exception accordingly
+            }
         }
-    }
 
-    String sql = "INSERT INTO public.activity(activityid, activityname, activityprice, activityduration, activityimage) VALUES (?, ?, ?, ?, ?)";
+        
+
+    String sql = "INSERT INTO public.activity(activityduration, activityname, activityprice, activityimage) VALUES (?, ?, ?, ?)";
     try (Connection conn = dataSource.getConnection()) {
         conn.setAutoCommit(false);
         try (PreparedStatement statement = conn.prepareStatement(sql, new String[] {"activityid"})) {
-            statement.setString(1, activityName);
-            statement.setDouble(2, activityPrice);
-            statement.setString(3, activityDuration);
+            statement.setString(2, activityName);
+            statement.setDouble(3, activityPrice);
+            statement.setString(1, activityDuration);
             statement.setString(4, activityImagePath);
 
             // Execute the insert statement
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows > 0) {
-                // Retrieve the generated keys
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         Long activityId = generatedKeys.getLong(1);
 
                         if ("wet".equals(activityType)) {
-                            Wet wetActivity = new Wet();
-                            wetActivity.setActivityId(activityId);
-                            wetActivity.setActivityName(activityName);
-                            wetActivity.setActivityDuration(activityDuration);
-                            wetActivity.setActivityPrice(activityPrice);
-                            wetActivity.setActivityImage(activityImagePath);
-                            wetActivity.setActivityEquipment(equipment);
-
                             String wetSql = "INSERT INTO public.wet(activityid, activityequipment) VALUES (?, ?)";
                             try (PreparedStatement wetStatement = conn.prepareStatement(wetSql)) {
-                                wetStatement.setLong(1, wetActivity.getActivityId());
-                                wetStatement.setString(2, wetActivity.getActivityEquipment());
+                                wetStatement.setLong(1, activityId);
+                                wetStatement.setString(2, equipment);
                                 wetStatement.executeUpdate();
                             }
 
                         } else if ("dry".equals(activityType)) {
-                            Dry dryActivity = new Dry();
-                            dryActivity.setActivityId(activityId);
-                            dryActivity.setActivityName(activityName);
-                            dryActivity.setActivityDuration(activityDuration);
-                            dryActivity.setActivityPrice(activityPrice);
-                            dryActivity.setActivityImage(activityImagePath);
-                            dryActivity.setActivityLocation(location);
-
                             String drySql = "INSERT INTO public.dry(activityid, activitylocation) VALUES (?, ?)";
                             try (PreparedStatement dryStatement = conn.prepareStatement(drySql)) {
-                                dryStatement.setLong(1, dryActivity.getActivityId());
-                                dryStatement.setString(2, dryActivity.getActivityLocation());
+                                dryStatement.setLong(1, activityId);
+                                dryStatement.setString(2, location);
                                 dryStatement.executeUpdate();
                             }
 
                         }
 
-                        // Commit the transaction
                         conn.commit();
                     }
                 }
             } else {
-                // Rollback the transaction in case of failure
                 conn.rollback();
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle the exception accordingly
+            try {
+                conn.rollback();  // Ensure rollback on exception
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();
-        // Handle the exception accordingly
     }
 
-    // Redirect to the activity list page
     return "redirect:/listActivity";
 }
 
