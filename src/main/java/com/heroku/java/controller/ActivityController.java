@@ -60,9 +60,9 @@ public class ActivityController {
     @PostMapping("/createActivities")
     public String createActivity(HttpSession session, 
                                  @ModelAttribute("createActivities") 
-                                 @RequestParam("activityName") String activityName,
-                                 @RequestParam("activityDuration") String activityDuration,
-                                 @RequestParam("activityPrice") int activityPrice,
+                                 @RequestParam("name") String activityName,
+                                 @RequestParam("duration") String activityDuration,
+                                 @RequestParam("price") int activityPrice,
                                  @RequestParam("activityImage") MultipartFile activityImage,
                                  @RequestParam("activityType") String activityType,
                                  @RequestParam(value = "equipment", required = false) String equipment,
