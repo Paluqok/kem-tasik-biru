@@ -183,40 +183,54 @@ public String showUpdateForm(HttpSession session, Model model) {
 
 // Process the update form
 @PostMapping("/updateStaff")
-public String updateStaff(@RequestParam("staffId") Long staffId,
-                          @RequestParam("staffName") String staffName,
-                          @RequestParam("staffEmail") String staffEmail,
-                          @RequestParam("staffAddress") String staffAddress,
-                          @RequestParam("staffPhoneNo") String staffPhoneNo,
-                          @RequestParam(value = "staffPassword", required = false) String staffPassword,
-                          @RequestParam(value = "checkPassword", required = false) String checkPassword,
-                          HttpSession session) throws IOException {
+public String updateStaff(
+    @RequestParam("staffId") Long staffId,
+    @RequestParam("staffName") String staffName,
+    @RequestParam("staffEmail") String staffEmail,
+    @RequestParam("staffAddress") String staffAddress,
+    @RequestParam("staffPhoneNo") String staffPhoneNo,
+    @RequestParam(value = "staffPassword", required = false) String staffPassword,
+    @RequestParam(value = "checkPassword", required = false) String checkPassword,
+    HttpSession session) throws IOException {
 
-    Staff staff = (Staff) session.getAttribute("staff");
-    if (staff == null) {
+    // Fetch the current staff object from the session
+    Staff currentStaff = (Staff) session.getAttribute("staff");
+    if (currentStaff == null) {
         return "redirect:/staffLogin";
     }
 
-    // Update only if the password fields are filled
-    if (staffPassword != null && !staffPassword.isEmpty() && staffPassword.equals(checkPassword)) {
-        staff.setStaffPassword(staffPassword);
+    // Check that the staffId matches the ID of the staff in the session
+    if (!staffId.equals(currentStaff.getStaffId())) {
+        return "redirect:/staffProfile";
     }
 
-    staff.setStaffName(staffName);
-    staff.setStaffEmail(staffEmail);
-    staff.setStaffAddress(staffAddress);
-    staff.setStaffPhoneNo(staffPhoneNo);
+    // Update the staff details
+    currentStaff.setStaffName(staffName);
+    currentStaff.setStaffEmail(staffEmail);
+    currentStaff.setStaffAddress(staffAddress);
+    currentStaff.setStaffPhoneNo(staffPhoneNo);
 
+    // Update password only if provided and passwords match
+    if (staffPassword != null && !staffPassword.isEmpty()) {
+        if (staffPassword.equals(checkPassword)) {
+            currentStaff.setStaffPassword(staffPassword);
+        } else {
+            // Add an error message to the model if passwords do not match
+            return "redirect:/staffUpdate?error=true";
+        }
+    }
+
+    // Save the updated staff object
     try (Connection connection = dataSource.getConnection()) {
         String staffSql = "UPDATE public.staff SET staffname = ?, staffemail = ?, staffaddress = ?, staffphoneno = ?, staffpassword = ? WHERE staffid = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(staffSql)) {
-            statement.setString(1, staff.getStaffName());
-            statement.setString(2, staff.getStaffEmail());
-            statement.setString(3, staff.getStaffAddress());
-            statement.setString(4, staff.getStaffPhoneNo());
-            statement.setString(5, staff.getStaffPassword());
-            statement.setLong(6, staff.getStaffId());
+            statement.setString(1, currentStaff.getStaffName());
+            statement.setString(2, currentStaff.getStaffEmail());
+            statement.setString(3, currentStaff.getStaffAddress());
+            statement.setString(4, currentStaff.getStaffPhoneNo());
+            statement.setString(5, currentStaff.getStaffPassword());
+            statement.setLong(6, currentStaff.getStaffId());
             statement.executeUpdate();
         }
     } catch (SQLException e) {
@@ -224,8 +238,8 @@ public String updateStaff(@RequestParam("staffId") Long staffId,
         throw new RuntimeException("Failed to update staff", e);
     }
 
-    session.setAttribute("staff", staff);
-    return "redirect:staff/staffProfile";
+    session.setAttribute("staff", currentStaff);
+    return "redirect:/staffProfile";
 }
 
 
