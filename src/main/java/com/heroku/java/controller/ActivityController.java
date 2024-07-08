@@ -93,7 +93,7 @@ public class ActivityController {
         }
     }
 
-    String sql = "INSERT INTO public.activity(activityid, activityname, activityprice, activityduration, activityimage) VALUES (activity_seq.NEXTVAL, ?, ?, ?, ?)";
+    String sql = "INSERT INTO public.activity(activityid, activityname, activityprice, activityduration, activityimage) VALUES (?, ?, ?, ?, ?)";
     try (Connection conn = dataSource.getConnection()) {
         conn.setAutoCommit(false);
         try (PreparedStatement statement = conn.prepareStatement(sql, new String[] {"activityid"})) {
