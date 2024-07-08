@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
+
 import com.heroku.java.model.Activity;
 import com.heroku.java.model.Dry;
 import com.heroku.java.model.Wet;
@@ -34,8 +35,14 @@ import com.heroku.java.model.Staff;
 
 @Controller
 public class ActivityController {
+    private final DataSource dataSource;
 
     private List<Activity> activities = new ArrayList<>();
+
+    @Autowired
+    public ActivityController(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @GetMapping("/listActivity")
     public String listActivities(HttpSession session, Model model) {
@@ -72,31 +79,93 @@ public class ActivityController {
             return "redirect:/staffLogin";
         }
 
-        Activity activity = new Activity();
-        activity.setActivityName(activityName);
-        activity.setActivityDuration(activityDuration);
-        activity.setActivityPrice(activityPrice);
-
-        if (!activityImage.isEmpty()) {
-            // Save the image to the server
-            // For now, we will just set a placeholder string
-            activity.setActivityImage("saved/image/path/" + activityImage.getOriginalFilename());
+        // Handle file upload
+    String activityImagePath = null;
+    if (!activityImage.isEmpty()) {
+        String uploadDirectory = "/path/to/upload/directory/"; // Define this directory for saving the image
+        try {
+            Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
+            Files.write(filePath, activityImage.getBytes());
+            activityImagePath = filePath.toString(); // Save the path of the uploaded image
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the exception accordingly
         }
-
-        if ("wet".equals(activityType)) {
-            Wet wetActivity = new Wet(activity.getActivityId(), activity.getActivityName(), activity.getActivityDuration(), 
-                                      activity.getActivityPrice(), activity.getActivityImage(), equipment);
-            activities.add(wetActivity);
-        } else if ("dry".equals(activityType)) {
-            Dry dryActivity = new Dry(activity.getActivityId(), activity.getActivityName(), activity.getActivityDuration(), 
-                                      activity.getActivityPrice(), activity.getActivityImage(), location);
-            activities.add(dryActivity);
-        } else {
-            activities.add(activity);
-        }
-
-        return "redirect:/listActivity";
     }
+
+    String sql = "INSERT INTO activity(activityid, activityname, activityprice, activityduration, activityimage) VALUES (activity_seq.NEXTVAL, ?, ?, ?, ?)";
+    try (Connection conn = dataSource.getConnection()) {
+        conn.setAutoCommit(false);
+        try (PreparedStatement statement = conn.prepareStatement(sql, new String[] {"activityid"})) {
+            statement.setString(1, activityName);
+            statement.setDouble(2, activityPrice);
+            statement.setString(3, activityDuration);
+            statement.setString(4, activityImagePath);
+
+            // Execute the insert statement
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows > 0) {
+                // Retrieve the generated keys
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        Long activityId = generatedKeys.getLong(1);
+
+                        if ("wet".equals(activityType)) {
+                            Wet wetActivity = new Wet();
+                            wetActivity.setActivityId(activityId);
+                            wetActivity.setActivityName(activityName);
+                            wetActivity.setActivityDuration(activityDuration);
+                            wetActivity.setActivityPrice(activityPrice);
+                            wetActivity.setActivityImage(activityImagePath);
+                            wetActivity.setActivityEquipment(equipment);
+
+                            String wetSql = "INSERT INTO wet(activityid, activityequipment) VALUES (?, ?)";
+                            try (PreparedStatement wetStatement = conn.prepareStatement(wetSql)) {
+                                wetStatement.setLong(1, wetActivity.getActivityId());
+                                wetStatement.setString(2, wetActivity.getActivityEquipment());
+                                wetStatement.executeUpdate();
+                            }
+
+                        } else if ("dry".equals(activityType)) {
+                            Dry dryActivity = new Dry();
+                            dryActivity.setActivityId(activityId);
+                            dryActivity.setActivityName(activityName);
+                            dryActivity.setActivityDuration(activityDuration);
+                            dryActivity.setActivityPrice(activityPrice);
+                            dryActivity.setActivityImage(activityImagePath);
+                            dryActivity.setActivityLocation(location);
+
+                            String drySql = "INSERT INTO dry(activityid, activitylocation) VALUES (?, ?)";
+                            try (PreparedStatement dryStatement = conn.prepareStatement(drySql)) {
+                                dryStatement.setLong(1, dryActivity.getActivityId());
+                                dryStatement.setString(2, dryActivity.getActivityLocation());
+                                dryStatement.executeUpdate();
+                            }
+
+                        }
+
+                        // Commit the transaction
+                        conn.commit();
+                    }
+                }
+            } else {
+                // Rollback the transaction in case of failure
+                conn.rollback();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle the exception accordingly
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        // Handle the exception accordingly
+    }
+
+    // Redirect to the activity list page
+    return "redirect:/listActivity";
+}
 
     @GetMapping("/updateActivity/{id}")
     public String updateActivityForm(@PathVariable Long id, HttpSession session, Model model) {
