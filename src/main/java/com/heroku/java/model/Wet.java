@@ -10,11 +10,11 @@ public class Wet extends Activity {
         this.activityEquipment=activityEquipment;
     }
 
-    public String getactivityEquipment(){
-        return this.activityEquipment;
+    public String getActivityEquipment() {
+        return activityEquipment;
     }
 
-    public void setactivityEquipment(String activityEquipment) {
-        this.activityEquipment=activityEquipment;
+    public void setActivityEquipment(String activityEquipment) {
+        this.activityEquipment = activityEquipment;
     }
 }

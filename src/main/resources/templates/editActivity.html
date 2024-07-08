@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Activity</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Edit Activity</h1>
+    <form action="/api/updateActivity" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="${activity.activityId}">
+
+        <label for="name">Activity Name:</label>
+        <input type="text" id="name" name="name" value="${activity.activityName}" required><br><br>
+
+        <label for="duration">Duration:</label>
+        <input type="text" id="duration" name="duration" value="${activity.activityDuration}" required><br><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" step="0.01" value="${activity.activityPrice}" required><br><br>
+
+        <label for="activityImage">Activity Image:</label>
+        <input type="file" id="activityImage" name="activityImage" accept="image/*"><br><br>
+        <img src="${activity.activityImage}" alt="Activity Image" style="max-width: 200px;"><br><br>
+
+        <label for="activityType">Activity Type:</label>
+        <select id="activityType" name="activityType" required>
+            <option value="">Select Activity Type</option>
+            <option value="wet" ${activity instanceof Wet ? 'selected' : ''}>Wet</option>
+            <option value="dry" ${activity instanceof Dry ? 'selected' : ''}>Dry</option>
+        </select><br><br>
+
+        <div id="extraFields">
+            ${activity instanceof Wet ? `
+                <label for="equipment">Equipment:</label>
+                <input type="text" id="equipment" name="equipment" value="${activity.activityEquipment}">
+            ` : `
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" value="${activity.activityLocation}">
+            `}
+        </div>
+
+        <button type="submit">Update Activity</button>
+    </form>
+
+    <script>
+        document.getElementById('activityType').addEventListener('change', function() {
+            const extraFields = document.getElementById('extraFields');
+            extraFields.innerHTML = '';
+            if (this.value === 'wet') {
+                extraFields.innerHTML = `
+                    <label for="equipment">Equipment:</label>
+                    <input type="text" id="equipment" name="equipment"><br><br>
+                `;
+            } else if (this.value === 'dry') {
+                extraFields.innerHTML = `
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location"><br><br>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
