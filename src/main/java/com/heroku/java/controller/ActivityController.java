@@ -31,7 +31,7 @@ public class ActivityController {
         this.dataSource = dataSource;
     }
 
-    @GetMapping("/activity-list")
+    @GetMapping("/listActivity")
     public String listActivities(Model model) {
         try (Connection conn = dataSource.getConnection()) {
             String sql = "SELECT * FROM activity LEFT JOIN wet ON activity.activityid = wet.activityid LEFT JOIN dry ON activity.activityid = dry.activityid";
@@ -44,7 +44,7 @@ public class ActivityController {
             e.printStackTrace();
             throw new RuntimeException("Failed to list activities", e);
         }
-        return "activity-list";
+        return "listActivity";
     }
 
     @GetMapping("/createActivity")
