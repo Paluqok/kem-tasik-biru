@@ -210,31 +210,30 @@ public class StaffController {
         return "redirect:/staffProfile";
     }
 
-    @GetMapping("/deleteStaff")
-    public String deleteStaff(HttpSession session) throws IOException {
-        Staff staff = (Staff) session.getAttribute("staff");
-        if (staff == null) {
-            return "redirect:/staffLogin";
-        }
-
-        try (Connection connection = dataSource.getConnection()) {
-            String staffSql = "DELETE FROM public.staff WHERE staffid = ?";
-
-            try (PreparedStatement statement = connection.prepareStatement(staffSql)) {
-                statement.setLong(1, staff.getStaffId());
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            logger.error("Failed to delete staff", e);
-            throw new RuntimeException("Failed to delete staff", e);
-        }
-
-        session.invalidate();
+    @PostMapping("/deleteStaff")
+public String deleteStaff(HttpSession session) {
+    Long staffId = (Long) session.getAttribute("staffid");
+    if (staffId == null) {
+        logger.warn("staffId is null in session");
         return "redirect:/staffLogin";
     }
-    
 
+    try (Connection connection = dataSource.getConnection()) {
+        String staffSql = "DELETE FROM public.staff WHERE staffid = ?";
+        try (PreparedStatement statement = connection.prepareStatement(staffSql)) {
+            statement.setLong(1, staffId);
+            statement.executeUpdate();
+        }
+    } catch (SQLException e) {
+        logger.error("Failed to delete staff", e);
+        throw new RuntimeException("Failed to delete staff", e);
+    }
 
+    // Invalidate the session
+    session.invalidate();
+
+    return "redirect:/staffLogin";
+}
     
 }
 
