@@ -26,213 +26,121 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpSession;
 import com.heroku.java.model.Activity;
 import com.heroku.java.model.Dry;
 import com.heroku.java.model.Wet;
+import com.heroku.java.model.Staff;
 
 @Controller
-@RequestMapping("/api")
 public class ActivityController {
 
-    private final DataSource dataSource;
+    private List<Activity> activities = new ArrayList<>();
 
-    @Autowired
-    public ActivityController(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @GetMapping("/listActivity")
+    public String listActivities(HttpSession session, Model model) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+        model.addAttribute("activities", activities);
+        return "listActivity";
     }
 
     @GetMapping("/createActivity")
-    public String showCreateActivityForm() {
-        return "createActivity"; // This should match the filename of your createActivity.html
+    public String createActivityForm(HttpSession session, Model model) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+        model.addAttribute("activity", new Activity());
+        return "createActivity";
     }
 
-    @PostMapping("/activity")
-    public String createActivity(
-            @RequestParam("activityName") String activityName,
-            @RequestParam("activityDuration") String activityDuration,
-            @RequestParam("activityPrice") double activityPrice,
-            @RequestParam("activityImage") MultipartFile activityImage,
-            @RequestParam("activityType") String activityType,
-            @RequestParam(value = "equipment", required = false) String equipment,
-            @RequestParam(value = "location", required = false) String location
-    ) throws IOException {
-        // Handle image upload and get URL
-        String imageUrl = "";
-        if (activityImage != null && !activityImage.isEmpty()) {
-            String fileName = activityImage.getOriginalFilename();
-            Path path = Paths.get("uploads/" + fileName);
-            Files.write(path, activityImage.getBytes());
-            imageUrl = path.toString(); // Save the file path or URL as needed
+    @PostMapping("/createActivity")
+    public String createActivity(HttpSession session, 
+                                 @ModelAttribute Activity activity, 
+                                 @RequestParam("activityImage") MultipartFile activityImage,
+                                 @RequestParam("activityType") String activityType,
+                                 @RequestParam(value = "equipment", required = false) String equipment,
+                                 @RequestParam(value = "location", required = false) String location) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
         }
 
-        Activity activity;
-        if ("wet".equalsIgnoreCase(activityType)) {
-            activity = new Wet(null, activityName, activityDuration, activityPrice, imageUrl, equipment);
+        if (!activityImage.isEmpty()) {
+            // Save the image to the server
+            // For now, we will just set a placeholder string
+            activity.setActivityImage("saved/image/path/" + activityImage.getOriginalFilename());
+        }
+
+        if ("wet".equals(activityType)) {
+            Wet wetActivity = new Wet(activity.getActivityId(), activity.getActivityName(), activity.getActivityDuration(), 
+                                      activity.getActivityPrice(), activity.getActivityImage(), equipment);
+            activities.add(wetActivity);
+        } else if ("dry".equals(activityType)) {
+            Dry dryActivity = new Dry(activity.getActivityId(), activity.getActivityName(), activity.getActivityDuration(), 
+                                      activity.getActivityPrice(), activity.getActivityImage(), location);
+            activities.add(dryActivity);
         } else {
-            activity = new Dry(null, activityName, activityDuration, activityPrice, imageUrl, location);
+            activities.add(activity);
         }
 
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "INSERT INTO public.activity (activityname, activityduration, activityprice, activityimage, activitytype, activityequipment, activitylocation) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, activity.getActivityName());
-                statement.setString(2, activity.getActivityDuration());
-                statement.setDouble(3, activity.getActivityPrice());
-                statement.setString(4, activity.getActivityImage());
-                statement.setString(5, activityType);
-
-                if ("wet".equalsIgnoreCase(activityType)) {
-                    Wet wetActivity = (Wet) activity;
-                    statement.setString(6, wetActivity.getActivityEquipment());
-                    statement.setNull(7, Types.VARCHAR); // Set `activityLocation` as NULL for Wet type
-                } else {
-                    Dry dryActivity = (Dry) activity;
-                    statement.setNull(6, Types.VARCHAR); // Set `activityEquipment` as NULL for Dry type
-                    statement.setString(7, dryActivity.getActivityLocation());
-                }
-
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "redirect:/activity-list";
+        return "redirect:/listActivity";
     }
 
-    @GetMapping("/listActivity")
-    @ResponseBody
-    public List<Activity> getActivities() {
-        List<Activity> activities = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "SELECT * FROM public.activity";
-            try (Statement statement = connection.createStatement();
-                 ResultSet resultSet = statement.executeQuery(sql)) {
-                while (resultSet.next()) {
-                    Long id = resultSet.getLong("activityid");
-                    String name = resultSet.getString("activityname");
-                    String duration = resultSet.getString("activityduration");
-                    double price = resultSet.getDouble("activityprice");
-                    String image = resultSet.getString("activityimage");
-                    String type = resultSet.getString("activitytype");
-                    String equipment = resultSet.getString("activityequipment");
-                    String location = resultSet.getString("activitylocation");
-
-                    Activity activity;
-                    if ("wet".equals(type)) {
-                        activity = new Wet(id, name, duration, price, image, equipment);
-                    } else {
-                        activity = new Dry(id, name, duration, price, image, location);
-                    }
-                    activities.add(activity);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    @GetMapping("/updateActivity/{id}")
+    public String updateActivityForm(@PathVariable Long id, HttpSession session, Model model) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
         }
-        return activities;
+
+        Activity activity = activities.stream()
+                                      .filter(a -> a.getActivityId().equals(id))
+                                      .findFirst()
+                                      .orElse(null);
+        model.addAttribute("activity", activity);
+        return "updateActivity";
     }
 
-    @GetMapping("/editActivity/{id}")
-    public String editActivity(@PathVariable("id") Long id, Model model) {
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "SELECT * FROM public.activity WHERE activityid = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setLong(1, id);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        String name = resultSet.getString("activityname");
-                        String duration = resultSet.getString("activityduration");
-                        double price = resultSet.getDouble("activityprice");
-                        String image = resultSet.getString("activityimage");
-                        String type = resultSet.getString("activitytype");
-                        String equipment = resultSet.getString("activityequipment");
-                        String location = resultSet.getString("activitylocation");
-
-                        Activity activity;
-                        if ("wet".equals(type)) {
-                            activity = new Wet(id, name, duration, price, image, equipment);
-                        } else {
-                            activity = new Dry(id, name, duration, price, image, location);
-                        }
-                        model.addAttribute("activity", activity);
-                        return "editActivity";
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    @PostMapping("/updateActivity/{id}")
+    public String updateActivity(@PathVariable Long id, HttpSession session,
+                                 @ModelAttribute Activity updatedActivity,
+                                 @RequestParam("activityImage") MultipartFile activityImage) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
         }
-        return "redirect:/activity-list";
+
+        Activity activity = activities.stream()
+                                      .filter(a -> a.getActivityId().equals(id))
+                                      .findFirst()
+                                      .orElse(null);
+
+        if (activity != null) {
+            activity.setActivityName(updatedActivity.getActivityName());
+            activity.setActivityDuration(updatedActivity.getActivityDuration());
+            activity.setActivityPrice(updatedActivity.getActivityPrice());
+
+            if (!activityImage.isEmpty()) {
+                activity.setActivityImage("saved/image/path/" + activityImage.getOriginalFilename());
+            }
+        }
+
+        return "redirect:/listActivity";
     }
 
-    @PostMapping("/updateActivity")
-    public String updateActivity(
-            @RequestParam("id") Long id,
-            @RequestParam("name") String name,
-            @RequestParam("duration") String duration,
-            @RequestParam("price") double price,
-            @RequestParam("activityImage") MultipartFile activityImage,
-            @RequestParam("activityType") String activityType,
-            @RequestParam(value = "equipment", required = false) String equipment,
-            @RequestParam(value = "location", required = false) String location
-    ) throws IOException {
-        // Handle image upload and get URL
-        String imageUrl = "";
-        if (activityImage != null && !activityImage.isEmpty()) {
-            String fileName = activityImage.getOriginalFilename();
-            Path path = Paths.get("uploads/" + fileName);
-            Files.write(path, activityImage.getBytes());
-            imageUrl = path.toString(); // Save the file path or URL as needed
+    @GetMapping("/deleteActivity/{id}")
+    public String deleteActivity(@PathVariable Long id, HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
         }
 
-        Activity activity;
-        if ("wet".equalsIgnoreCase(activityType)) {
-            activity = new Wet(id, name, duration, price, imageUrl, equipment);
-        } else {
-            activity = new Dry(id, name, duration, price, imageUrl, location);
-        }
+        activities.removeIf(a -> a.getActivityId().equals(id));
 
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "UPDATE public.activity SET activityname=?, activityduration=?, activityprice=?, activityimage=?, activityequipment=?, activitylocation=? WHERE activityid=?";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, activity.getActivityName());
-                statement.setString(2, activity.getActivityDuration());
-                statement.setDouble(3, activity.getActivityPrice());
-                statement.setString(4, activity.getActivityImage());
-
-                if ("wet".equalsIgnoreCase(activityType)) {
-                    Wet wetActivity = (Wet) activity;
-                    statement.setString(5, wetActivity.getActivityEquipment());
-                    statement.setNull(6, Types.VARCHAR); // Set `activityLocation` as NULL for Wet type
-                } else {
-                    Dry dryActivity = (Dry) activity;
-                    statement.setNull(5, Types.VARCHAR); // Set `activityEquipment` as NULL for Dry type
-                    statement.setString(6, dryActivity.getActivityLocation());
-                }
-
-                statement.setLong(7, activity.getActivityId());
-
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "redirect:/activity-list";
-    }
-
-    @PostMapping("/deleteActivity")
-    public String deleteActivity(@RequestParam("id") Long id) {
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "DELETE FROM public.activity WHERE activityid = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setLong(1, id);
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "redirect:/activity-list";
+        return "redirect:/listActivity";
     }
 }

@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity List</title>
     <link href="css/staffBase.css" rel="stylesheet">
     <link href="css/staffNavbar.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
         .container {
             margin-top: 40px;
@@ -33,40 +31,9 @@
         function confirmDelete(activityId) {
             if (confirm("Are you sure you want to delete this activity?")) {
                 console.log('Deleting activity with ID:', activityId);
-                window.location.href = 'ActivityController?action=deleteActivity&id=' + activityId;
+                window.location.href = '/deleteActivity/' + activityId;
             }
         }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('/api/activities') // Replace with your actual API endpoint
-                .then(response => response.json())
-                .then(data => {
-                    const activitiesContainer = document.getElementById('activities-container');
-                    if (data.length === 0) {
-                        activitiesContainer.innerHTML = '<div class="col-12"><p>No activities found.</p></div>';
-                    } else {
-                        data.forEach(activity => {
-                            const card = document.createElement('div');
-                            card.className = 'col-md-3';
-                            card.innerHTML = `
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${activity.activityName}</h5>
-                                        <p class="card-text">
-                                            Price: ${activity.activityPrice}<br>
-                                            Duration: ${activity.activityDuration}<br>
-                                            ${activity.activityType === 'wet' ? `Equipment: ${activity.activityEquipment}<br>Type: Wet` : `Location: ${activity.activityLocation}<br>Type: Dry`}
-                                        </p>
-                                        <a href="ActivityController?action=editActivity&id=${activity.activityId}" class="btn btn-info">Update</a>
-                                        <a href="javascript:void(0);" onclick="confirmDelete(${activity.activityId});" class="btn btn-danger">Delete</a>
-                                    </div>
-                                </div>`;
-                            activitiesContainer.appendChild(card);
-                        });
-                    }
-                })
-                .catch(error => console.error('Error fetching activities:', error));
-        });
     </script>
 </head>
 <body>
@@ -79,26 +46,26 @@
         </div>
         <ul class="nav-links">
             <li>
-                <a href="homeStaff.html">
-                    <i class='bx bx-grid-alt'></i>
+                <a href="/homeStaff">
+                    <i class='bx bx-grid-alt' ></i>
                     <span class="link_name">Home</span>
                 </a>
                 <ul class="sub-menu blank">
-                    <li><a class="link_name" href="homeStaff.html">Home</a></li>
+                    <li><a class="link_name" href="/homeStaff">Home</a></li>
                 </ul>
             </li>
             <li>
-                <a href="activity-list.html">
-                    <i class='bx bx-line-chart'></i>
+                <a href="/listActivities">
+                    <i class='bx bx-line-chart' ></i>
                     <span class="link_name">Activity</span>
                 </a>
                 <ul class="sub-menu blank">
-                    <li><a class="link_name" href="activity-list.html">Activity</a></li>
+                    <li><a class="link_name" href="/listActivities">Activity</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#">
-                    <i class='bx bx-compass'></i>
+                    <i class='bx bx-compass' ></i>
                     <span class="link_name">History</span>
                 </a>
                 <ul class="sub-menu blank">
@@ -106,12 +73,12 @@
                 </ul>
             </li>
             <li>
-                <a href="staffProfile.html">
+                <a href="/staffProfile">
                     <i class='bx bx-history'></i>
                     <span class="link_name">Profile</span>
                 </a>
                 <ul class="sub-menu blank">
-                    <li><a class="link_name" href="staffProfile.html">Profile</a></li>
+                    <li><a class="link_name" href="/staffProfile">Profile</a></li>
                 </ul>
             </li>
             <li>
@@ -122,21 +89,21 @@
                     <div class="name-job">
                         <div class="profile_name">Log Out</div>
                     </div>
-                    <a href="staffLogin.html"><i class='bx bx-log-out'></i></a>
+                    <a href="/staffLogin"><i class='bx bx-log-out' ></i></a>
                 </div>
             </li>
         </ul>
     </div>
     <section class="home-section">
         <div class="home-content">
-            <i class='bx bx-menu'></i>
+            <i class='bx bx-menu' ></i>
         </div>
     </section>
     <!--<Script for Navbar>-->
     <script>
         let arrow = document.querySelectorAll(".arrow");
         for (var i = 0; i < arrow.length; i++) {
-            arrow[i].addEventListener("click", (e) => {
+            arrow[i].addEventListener("click", (e)=>{
                 let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
                 arrowParent.classList.toggle("showMenu");
             });
@@ -144,7 +111,7 @@
         let sidebar = document.querySelector(".sidebar");
         let sidebarBtn = document.querySelector(".bx-menu");
         console.log(sidebarBtn);
-        sidebarBtn.addEventListener("click", () => {
+        sidebarBtn.addEventListener("click", ()=>{
             sidebar.classList.toggle("close");
         });
     </script>
@@ -153,13 +120,32 @@
 <div class="container">
     <div class="row">
         <div class="col-12 text-right">
-            <a th:href="@{/createActivity}" class="btn btn-primary">Create Activity</a>
+            <a href="/createActivity" class="btn btn-primary">Create Activity</a>
         </div>
     </div>
-    <div class="row" id="activities-container">
-        <!-- Activities will be populated here by JavaScript -->
+    <div class="row">
+        <div th:each="activity : ${activities}" class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${activity.activityName}">ActivityName</h5>
+                    <p class="card-text">
+                        Price: <span th:text="${activity.activityPrice}">ActivityPrice</span><br>
+                        Duration: <span th:text="${activity.activityDuration}">ActivityDuration</span><br>
+                        <span th:if="${activity instanceof T(com.heroku.java.model.Wet)}">
+                            Equipment: <span th:text="${activity.activityEquipment}">ActivityEquipment</span><br>
+                            Type: Wet
+                        </span>
+                        <span th:if="${activity instanceof T(com.heroku.java.model.Dry)}">
+                            Location: <span th:text="${activity.activityLocation}">ActivityLocation</span><br>
+                            Type: Dry
+                        </span>
+                    </p>
+                    <a th:href="@{'/updateActivity/' + ${activity.activityId}}" class="btn btn-info">Update</a>
+                    <a href="javascript:void(0);" th:attr="onclick='confirmDelete(' + ${activity.activityId} + ')' " class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 </body>
 </html>

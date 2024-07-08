@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Activity</title>
+    <!-- Boxiocns CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+    <!-- Base CSS -->
+    <link rel="stylesheet" th:href="@{stylesheets/css/base.css}">
+
+    <!-- Specific CSS -->
+    <link rel="stylesheet" th:href="@{stylesheets/css/staffnavbar.css}">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+      .container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <h1>Update Activity</h1>
+      <form id="updateActivityForm" action="ActivityController" method="post">
+        <input type="hidden" id="action" name="action" value="updateActivity">
+        <input type="hidden" id="activityId" name="activityId" value="">
+
+        <div class="form-group">
+          <label for="name">Activity Name:</label>
+          <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="price">Price:</label>
+          <input type="number" class="form-control" id="price" name="price" required>
+        </div>
+        <div class="form-group">
+          <label for="duration">Duration:</label>
+          <input type="text" class="form-control" id="duration" name="duration" required>
+        </div>
+        <div class="form-group">
+          <label for="activityType">Activity Type:</label><br>
+          <label for="wet">Wet</label>
+          <input type="radio" id="wet" name="activityType" value="wet" onclick="toggleInput('wet')">
+          <label for="dry">Dry</label>
+          <input type="radio" id="dry" name="activityType" value="dry" onclick="toggleInput('dry')"><br><br>
+        </div>
+        <div id="equipmentDiv" class="form-group hidden">
+          <label for="equipment">Equipment:</label>
+          <input type="text" class="form-control" id="equipment" name="equipment">
+        </div>
+        <div id="locationDiv" class="form-group hidden">
+          <label for="location">Location:</label>
+          <input type="text" class="form-control" id="location" name="location">
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </form>
+    </div>
+    
+    <script>
+    function toggleInput(option) {
+      document.getElementById('equipmentDiv').classList.add('hidden');
+      document.getElementById('locationDiv').classList.add('hidden');
+      document.getElementById('equipment').value = '';
+      document.getElementById('location').value = '';
+    
+      if (option === 'wet') {
+        document.getElementById('equipmentDiv').classList.remove('hidden');
+      } else if (option === 'dry') {
+        document.getElementById('locationDiv').classList.remove('hidden');
+      }
+    }
+
+    // Populate form with data from the server
+    document.addEventListener('DOMContentLoaded', function() {
+      const params = new URLSearchParams(window.location.search);
+      document.getElementById('activityId').value = params.get('activityId');
+      document.getElementById('name').value = params.get('activityName');
+      document.getElementById('price').value = params.get('activityPrice');
+      document.getElementById('duration').value = params.get('activityDuration');
+      const activityType = params.get('activityType');
+      document.getElementById(activityType).checked = true;
+      toggleInput(activityType);
+      document.getElementById('equipment').value = params.get('activityEquipment') || '';
+      document.getElementById('location').value = params.get('activityLocation') || '';
+    });
+    </script>
+</body>
+</html>
