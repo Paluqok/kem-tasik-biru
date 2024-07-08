@@ -30,8 +30,7 @@
 <body>
 <div class="container">
   <h1>Create Activity</h1>
-  <a href="ActivityController?action=listActivities">List</a>
-  <form action="ActivityController" method="post">
+  <form th:action="@{/createActivities}" modelAttribute="createActivities" method="post">
     <div class="form-group">
       <input type="hidden" id="action" name="action" value="createActivity">
       <label for="name">Activity Name:</label>

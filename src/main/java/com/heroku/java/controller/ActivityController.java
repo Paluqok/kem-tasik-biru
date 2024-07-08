@@ -57,9 +57,12 @@ public class ActivityController {
         return "createActivity";
     }
 
-    @PostMapping("/createActivity")
+    @PostMapping("/createActivities")
     public String createActivity(HttpSession session, 
-                                 @ModelAttribute Activity activity, 
+                                 @ModelAttribute("createActivities") 
+                                 @RequestParam("activityName") String activityName,
+                                 @RequestParam("activityDuration") String activityDuration,
+                                 @RequestParam("activityPrice") int activityPrice,
                                  @RequestParam("activityImage") MultipartFile activityImage,
                                  @RequestParam("activityType") String activityType,
                                  @RequestParam(value = "equipment", required = false) String equipment,
@@ -68,6 +71,11 @@ public class ActivityController {
         if (staff == null) {
             return "redirect:/staffLogin";
         }
+
+        Activity activity = new Activity();
+        activity.setActivityName(activityName);
+        activity.setActivityDuration(activityDuration);
+        activity.setActivityPrice(activityPrice);
 
         if (!activityImage.isEmpty()) {
             // Save the image to the server
