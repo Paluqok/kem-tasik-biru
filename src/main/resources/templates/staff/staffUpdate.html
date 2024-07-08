@@ -55,7 +55,7 @@
 <body>
     <div class="container">
         <h1>Update Profile</h1>
-        <form action="/updateStaff" method="post" onsubmit="return validateEmailAndPhoneAndPassword()">
+        <form th:action="@{/updateStaff}" method="post" onsubmit="return validateEmailAndPhoneAndPassword()">
             <input type="hidden" name="staffId" value="${staff.staffId}">
 
             <div class="form-group">
