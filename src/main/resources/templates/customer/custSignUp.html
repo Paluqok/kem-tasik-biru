@@ -60,7 +60,7 @@
 <body>
     <div class="container">
         <h1>Create Customer Account</h1>
-        <form th:action="@{/createAccountCust}" modelAttribute="createAccountCust" method="post" onsubmit="return validateEmailAndPhone()">
+        <form th:action="@{/createAccountCustomer}" modelAttribute="createAccountCustomer" method="post" onsubmit="return validateEmailAndPhone()">
             <input type="hidden" name="action" value="signUp">
             <div class="form-group">
                 <label for="custName">Name:</label>
