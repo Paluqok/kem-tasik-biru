@@ -136,7 +136,7 @@
             <span th:text="${staff.managerId}"></span>
         </div>
         <div class="btn-container">
-            <a href="staffUpdate.html" class="btn btn-info">Update</a>
+            <a th:href="@{/staffUpdate}" class="btn btn-info">Update</a>
             <form action="/deleteStaff" method="post">
                 <button type="submit" class="btn btn-danger">Delete</button>
             </form>
