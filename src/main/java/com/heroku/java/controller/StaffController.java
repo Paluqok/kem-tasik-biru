@@ -225,7 +225,7 @@ public String updateStaff(@RequestParam("staffId") Long staffId,
     }
 
     session.setAttribute("staff", staff);
-    return "redirect:/staffProfile";
+    return "redirect:staff/staffProfile";
 }
 
 
