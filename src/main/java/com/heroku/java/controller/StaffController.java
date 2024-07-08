@@ -157,7 +157,7 @@ public class StaffController {
         }
 
         model.addAttribute("staff", staff);
-        return "staff/homeStaff";
+        return "homeStaff";
     }
 
     @GetMapping("/staffProfile")
