@@ -27,20 +27,7 @@
         <artifactId>slf4j-api</artifactId>
         <version>2.0.0</version>
     </dependency>
-    
-    <!-- SLF4J Simple implementation (or use another implementation like Logback or Log4j) -->
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>2.0.0</version>
-    </dependency>
 
-    <!-- Spring Boot Starter Web (if not already included) -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
