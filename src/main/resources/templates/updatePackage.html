@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Package</title>
+    <link th:href="@{/css/staffBase.css}" rel="stylesheet">
+    <link th:href="@{/css/staffNavbar.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<header>
+    <!-- Navbar -->
+    <div class="sidebar close">
+        <div class="logo-details">
+            <i class='bx bxl-c-plus-plus'></i>
+            <span class="logo_name">KemTasikBiru</span>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="/homeStaff">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="link_name">Home</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="/homeStaff">Home</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/listPackages">
+                    <i class='bx bx-line-chart'></i>
+                    <span class="link_name">Packages</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="/listPackages">Packages</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h2>Update Package</h2>
+            <form th:action="@{/updatePackage}" method="post">
+                <div class="form-group">
+                    <label for="packageName">Package Name</label>
+                    <input type="text" class="form-control" id="packageName" name="packageName" th:value="${package.packageName}" required>
+                </div>
+                <div class="form-group">
+                    <label for="activities">Select Activities</label>
+                    <select multiple class="form-control" id="activities" name="activities">
+                        <option th:each="activity : ${activities}" th:value="${activity.activityId}" th:text="${activity.activityName}" th:selected="${activity.activityId in package.activityIds}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Package</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

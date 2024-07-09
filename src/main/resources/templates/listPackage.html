@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package List</title>
+    <link th:href="@{/css/staffBase.css}" rel="stylesheet">
+    <link th:href="@{/css/staffNavbar.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<header>
+    <!-- Navbar -->
+    <div class="sidebar close">
+        <div class="logo-details">
+            <i class='bx bxl-c-plus-plus'></i>
+            <span class="logo_name">KemTasikBiru</span>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="/homeStaff">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="link_name">Home</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="/homeStaff">Home</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/listPackages">
+                    <i class='bx bx-line-chart'></i>
+                    <span class="link_name">Packages</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="/listPackages">Packages</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-right">
+            <a th:href="@{/createPackage}" class="btn btn-primary">Create Package</a>
+        </div>
+    </div>
+    <div class="row">
+        <div th:each="package : ${packages}" class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${package.packageName}">PackageName</h5>
+                    <p class="card-text">
+                        Price: <span th:text="${package.packagePrice}">PackagePrice</span><br>
+                        <span th:each="activity : ${package.activities}">
+                            <span th:text="${activity.activityName}">ActivityName</span><br>
+                        </span>
+                    </p>
+                    <a th:href="@{\'/updatePackage/\' + ${package.packageId}}" class="btn btn-info">Update</a>
+                    <a href="javascript:void(0);" th:attr="onclick=\'confirmDelete(\' + ${package.packageId} + \')\' " class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function confirmDelete(packageId) {
+        if (confirm("Are you sure you want to delete this package?")) {
+            window.location.href = '/deletePackage/' + packageId;
+        }
+    }
+</script>
+</body>
+</html>
