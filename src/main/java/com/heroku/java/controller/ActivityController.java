@@ -238,6 +238,18 @@ public class ActivityController {
 
         activities.removeIf(a -> a.getActivityId().equals(id));
 
+        // Remove from the database
+        String sql = "DELETE FROM public.activity WHERE activityid = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return "redirect:/listActivity";
     }
+
+    
 }
