@@ -35,10 +35,10 @@
                     <div>
                         <label for="activities">Select Activities:</label>
                         <select id="activities" name="activityIds" multiple required>
-                        <!-- Iterate over activities and display each one -->
-                        <th:block th:each="activity : ${activities}">
-                        <option th:value="${activity.activityId}" th:text="${activity.activityName}"></option>
-                        </th:block>
+                            <!-- Iterate over activities and display each one -->
+                            <th:block th:each="activity : ${activities}">
+                                <option th:value="${activity.activityId}" th:text="${activity.activityName}"></option>
+                            </th:block>
                         </select>
                     </div>
                     <div>

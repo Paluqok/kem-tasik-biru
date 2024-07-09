@@ -81,11 +81,11 @@ public class PackageController {
         }
 
         String sql = "SELECT * FROM activity WHERE activityid IN (" + 
-                      activityIds.stream().map(String::valueOf).collect(Collectors.joining(",")) + ")";
+                  activityIds.stream().map(String::valueOf).collect(Collectors.joining(",")) + ")";
         List<Activity> selectedActivities = jdbcTemplate.query(sql, activityRowMapper);
         double packagePrice = selectedActivities.stream()
-                .mapToDouble(Activity::getActivityPrice)
-                .sum();
+            .mapToDouble(Activity::getActivityPrice)
+            .sum();
 
         String insertPackageSql = "INSERT INTO package (packagename, packageprice) VALUES (?, ?)";
         jdbcTemplate.update(insertPackageSql, packageName, packagePrice);
