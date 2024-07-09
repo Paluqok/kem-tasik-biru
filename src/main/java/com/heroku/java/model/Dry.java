@@ -5,7 +5,7 @@ public class Dry extends Activity {
 
     public Dry() {}
 
-    public Dry(Long activityId, String activityName, String activityDuration, int activityPrice, String activityImage, String activityLocation) {
+    public Dry(Long activityId, String activityName, String activityDuration, double activityPrice, String activityImage, String activityLocation) {
         super(activityId, activityName, activityDuration, activityPrice, activityImage);
         this.activityLocation = activityLocation;
     }

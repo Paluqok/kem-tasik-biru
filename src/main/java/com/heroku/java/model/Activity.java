@@ -4,7 +4,7 @@ public class Activity {
     private Long activityId;
     private String activityName;
     private String activityDuration;
-    private int activityPrice;
+    private double activityPrice;
     private String activityImage;
 
     // Default constructor
@@ -12,7 +12,7 @@ public class Activity {
     }
 
     // Parameterized constructor
-    public Activity(Long activityId, String activityName, String activityDuration, int activityPrice, String activityImage) {
+    public Activity(Long activityId, String activityName, String activityDuration, double activityPrice, String activityImage) {
         this.activityId = activityId;
         this.activityName = activityName;
         this.activityDuration = activityDuration;
@@ -45,11 +45,11 @@ public class Activity {
         this.activityDuration = activityDuration;
     }
 
-    public int getActivityPrice() {
+    public double getActivityPrice() {
         return activityPrice;
     }
 
-    public void setActivityPrice(int activityPrice) {
+    public void setActivityPrice(double activityPrice) {
         this.activityPrice = activityPrice;
     }
 

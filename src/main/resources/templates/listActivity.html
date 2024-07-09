@@ -140,7 +140,7 @@
                         </span>
                     </p>
                     <a th:href="@{'/updateActivity/' + ${activity.activityId}}" class="btn btn-info">Update</a>
-                    <a th:href="@{'/deleteActivity/' + ${activity.activityId}}" class="btn btn-danger btn-sm">Delete</a>
+                    <a href="javascript:void(0);" th:attr="onclick='confirmDelete(' + ${activity.activityId} + ')' " class="btn btn-danger">Delete</a>
                 </div>
             </div>
         </div>

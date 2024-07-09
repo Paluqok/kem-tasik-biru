@@ -66,7 +66,7 @@ public class ActivityController {
                 Long id = rs.getLong("activityid");
                 String name = rs.getString("activityname");
                 String duration = rs.getString("activityduration");
-                int price = rs.getInt("activityprice");
+                double price = rs.getDouble("activityprice");
                 String image = rs.getString("activityimage");
                 String equipment = rs.getString("activityequipment");
                 String location = rs.getString("activitylocation");
@@ -105,7 +105,7 @@ public class ActivityController {
                                  @ModelAttribute("createActivities") 
                                  @RequestParam("name") String activityName,
                                  @RequestParam("duration") String activityDuration,
-                                 @RequestParam("price") int activityPrice,
+                                 @RequestParam("price") double activityPrice,
                                  @RequestParam("activityImage") MultipartFile activityImage,
                                  @RequestParam("activityType") String activityType,
                                  @RequestParam(value = "equipment", required = false) String equipment,
