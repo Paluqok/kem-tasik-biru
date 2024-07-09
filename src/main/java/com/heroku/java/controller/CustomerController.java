@@ -146,13 +146,13 @@ public class CustomerController {
             return "redirect:/custLogin";
         }
 
-        Customer cust = (Customer) session.getAttribute("customer");
+        Customer cust = (Customer) session.getAttribute("cust");
         if (cust == null) {
             logger.warn("cust is null in session");
             return "redirect:/custLogin";
         }
 
-        model.addAttribute("customer", cust);
+        model.addAttribute("cust", cust);
         return "homeCustomer";
     }
 
@@ -162,14 +162,14 @@ public class CustomerController {
         if (cust == null) {
             return "redirect:/custLogin";
         }
-        model.addAttribute("customer", cust);
+        model.addAttribute("cust", cust);
         return "customer/custProfile";
     }
 
     // Serve the update form with current data
 @GetMapping("/custUpdate")
 public String showUpdateForm(HttpSession session, Model model) {
-    Customer cust = (Customer) session.getAttribute("customer");
+    Customer cust = (Customer) session.getAttribute("cust");
     if (cust == null) {
         return "redirect:/custLogin";
     }
@@ -190,7 +190,7 @@ public String updateCustomer(
     HttpSession session) throws IOException {
 
     // Fetch the current cust object from the session
-    Customer currentCustomer = (Customer) session.getAttribute("customer");
+    Customer currentCustomer = (Customer) session.getAttribute("cust");
     if (currentCustomer == null) {
         return "redirect:/custLogin";
     }
@@ -234,7 +234,7 @@ public String updateCustomer(
         throw new RuntimeException("Failed to update cust", e);
     }
 
-    session.setAttribute("customer", currentCustomer);
+    session.setAttribute("cust", currentCustomer);
     return "redirect:/custProfile";
 }
 
