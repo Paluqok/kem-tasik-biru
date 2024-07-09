@@ -66,7 +66,7 @@ public class ActivityController {
                 Long id = rs.getLong("activityid");
                 String name = rs.getString("activityname");
                 String duration = rs.getString("activityduration");
-                double price = rs.getDouble("activityprice");
+                int price = rs.getInt("activityprice");
                 String image = rs.getString("activityimage");
                 String equipment = rs.getString("activityequipment");
                 String location = rs.getString("activitylocation");
