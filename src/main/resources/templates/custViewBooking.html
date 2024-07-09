@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>My Bookings</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Package Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Total Price</th>
+            <th>Payment Receipt</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="booking : ${bookings}">
+            <tr>
+                <td th:text="${booking.packageName}"></td>
+                <td th:text="${booking.bookingStartDate}"></td>
+                <td th:text="${booking.bookingEndDate}"></td>
+                <td th:text="${booking.totalPrice}"></td>
+                <td>
+                    <a th:href="@{/downloadReceipt/{id}(id=${booking.paymentReceiptId})}">Download</a>
+                </td>
+                <td th:text="${booking.bookingStatus}"></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
