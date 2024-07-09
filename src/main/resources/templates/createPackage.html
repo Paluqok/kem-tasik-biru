@@ -9,44 +9,88 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
         .container {
-            max-width: 500px;
+            max-width: 800px;
             margin: 40px auto;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .list-group {
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
 <header>
     <!-- Navbar -->
-    
 </header>
 <div class="container">
     <div class="row">
         <div class="col-12">
             <h1>Create Package</h1>
-                <form th:action="@{/createPackage}" method="post">
-                    <div>
-                        <label for="packageName">Package Name:</label>
-                        <input type="text" id="packageName" name="packageName" required>
-                    </div>
-                    <div>
-                        <label for="activities">Select Activities:</label>
-                        <select id="activities" name="activityIds" multiple required>
+            <form th:action="@{/createPackage}" method="post">
+                <div class="form-group">
+                    <label for="packageName">Package Name:</label>
+                    <input type="text" id="packageName" name="packageName" class="form-control" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="availableActivities">Available Activities:</label>
+                        <select id="availableActivities" class="form-control list-group" multiple>
                             <!-- Iterate over activities and display each one -->
                             <th:block th:each="activity : ${activities}">
                                 <option th:value="${activity.activityId}" th:text="${activity.activityName}"></option>
                             </th:block>
                         </select>
+                        <button type="button" class="btn btn-primary mt-2" onclick="addActivity()">Add</button>
                     </div>
-                    <div>
-                    <button type="submit" class="btn btn-primary">Create Package</button>
+                    <div class="col-md-2 text-center align-self-center">
+                        <button type="button" class="btn btn-primary mb-2" onclick="addActivity()">Add</button>
+                        <button type="button" class="btn btn-danger mb-2" onclick="removeActivity()">Remove</button>
                     </div>
-                </form>
+                    <div class="col-md-5">
+                        <label for="selectedActivities">Selected Activities:</label>
+                        <select id="selectedActivities" name="activityIds" class="form-control list-group" multiple required>
+                        </select>
+                        <button type="button" class="btn btn-danger mt-2" onclick="removeActivity()">Remove</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Create Package</button>
+            </form>
         </div>
     </div>
 </div>
+<script>
+    function addActivity() {
+        const available = document.getElementById('availableActivities');
+        const selected = document.getElementById('selectedActivities');
+        const selectedOptions = Array.from(available.selectedOptions);
+
+        selectedOptions.forEach(option => {
+            available.removeChild(option);
+            selected.appendChild(option);
+        });
+    }
+
+    function removeActivity() {
+        const selected = document.getElementById('selectedActivities');
+        const available = document.getElementById('availableActivities');
+        const selectedOptions = Array.from(selected.selectedOptions);
+
+        selectedOptions.forEach(option => {
+            selected.removeChild(option);
+            available.appendChild(option);
+        });
+    }
+
+    // When form is submitted, make sure selected activities are included in the form data
+    document.querySelector('form').addEventListener('submit', function() {
+        const selectedActivities = document.getElementById('selectedActivities');
+        const selectedValues = Array.from(selectedActivities.options).map(option => option.value);
+        document.querySelector('input[name="activityIds"]').value = selectedValues.join(',');
+    });
+</script>
 </body>
 </html>
