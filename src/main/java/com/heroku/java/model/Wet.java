@@ -5,16 +5,11 @@ public class Wet extends Activity {
 
     public Wet() {}
 
-    public Wet(Long activityId, String activityName, String activityDuration, double activityPrice, String activityImage, String activityEquipment) {
+    public Wet(Long activityId, String activityName, String activityDuration, int activityPrice, String activityImage, String activityEquipment) {
         super(activityId, activityName, activityDuration, activityPrice, activityImage);
-        this.activityEquipment=activityEquipment;
-    }
-
-    public String getActivityEquipment() {
-        return activityEquipment;
-    }
-
-    public void setActivityEquipment(String activityEquipment) {
         this.activityEquipment = activityEquipment;
     }
+
+    public String getActivityEquipment() { return activityEquipment; }
+    public void setActivityEquipment(String activityEquipment) { this.activityEquipment = activityEquipment; }
 }

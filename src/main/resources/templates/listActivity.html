@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity List</title>
-    <link href="css/staffBase.css" rel="stylesheet">
-    <link href="css/staffNavbar.css" rel="stylesheet">
+    <link th:href="@{/css/staffBase.css}" rel="stylesheet">
+    <link th:href="@{/css/staffNavbar.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
         .container {
@@ -120,7 +120,7 @@
 <div class="container">
     <div class="row">
         <div class="col-12 text-right">
-            <a href="/createActivity" class="btn btn-primary">Create Activity</a>
+            <a th:href="@{/createActivity}" class="btn btn-primary">Create Activity</a>
         </div>
     </div>
     <div class="row">

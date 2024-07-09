@@ -50,6 +50,42 @@ public class ActivityController {
         if (staff == null) {
             return "redirect:/staffLogin";
         }
+
+        List<Activity> activities = new ArrayList<>();
+        String sql = "SELECT a.activityid, a.activityname, a.activityduration, a.activityprice, a.activityimage, " +
+                     "w.activityequipment, d.activitylocation " +
+                     "FROM public.activity a " +
+                     "LEFT JOIN public.wet w ON a.activityid = w.activityid " +
+                     "LEFT JOIN public.dry d ON a.activityid = d.activityid";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Long id = rs.getLong("activityid");
+                String name = rs.getString("activityname");
+                String duration = rs.getString("activityduration");
+                double price = rs.getDouble("activityprice");
+                String image = rs.getString("activityimage");
+                String equipment = rs.getString("activityequipment");
+                String location = rs.getString("activitylocation");
+
+                Activity activity;
+                if (equipment != null) {
+                    activity = new Wet(id, name, duration, price, image, equipment);
+                } else if (location != null) {
+                    activity = new Dry(id, name, duration, price, image, location);
+                } else {
+                    activity = new Activity(id, name, duration, price, image);
+                }
+
+                activities.add(activity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         model.addAttribute("activities", activities);
         return "listActivity";
     }
@@ -94,7 +130,6 @@ public class ActivityController {
         }
 
         
-
     String sql = "INSERT INTO public.activity(activityduration, activityname, activityprice, activityimage) VALUES (?, ?, ?, ?)";
     try (Connection conn = dataSource.getConnection()) {
         conn.setAutoCommit(false);
