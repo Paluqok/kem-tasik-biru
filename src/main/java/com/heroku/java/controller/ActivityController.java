@@ -8,8 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +20,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +36,6 @@ public class ActivityController {
     private final DataSource dataSource;
 
     private JdbcTemplate jdbcTemplate;
-    private List<Activity> activities = new ArrayList<>();
     
 
     @Autowired
@@ -285,7 +281,7 @@ public String deleteActivity(@PathVariable("id") Long activityId, HttpSession se
         return "redirect:/staffLogin";
     }
 
-    String sql = "DELETE FROM public.booking WHERE bookingid = ?";
+    String sql = "DELETE FROM public.activity WHERE activityid = ?";
     jdbcTemplate.update(sql, activityId);
     return "redirect:/listActivity";
 }
