@@ -28,11 +28,14 @@
                 <td th:text="${booking.bookingEndDate}"></td>
                 <td th:text="${booking.totalPrice}"></td>
                 <td>
-                    <a th:href="@{/downloadReceipt/{id}(id=${booking.paymentReceiptId})}">Download</a>
+                    <a th:href="@{/downloadReceipt/{id}(id=${booking.bookingId})}">Download</a>
                 </td>
                 <td th:text="${booking.bookingStatus}"></td>
             </tr>
         </th:block>
+        <tr th:if="${#lists.isEmpty(bookings)}">
+            <td colspan="6">No bookings available</td>
+        </tr>
         </tbody>
     </table>
 </div>

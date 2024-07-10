@@ -27,22 +27,22 @@ public class PaymentController {
     }
 
     @PostMapping("/submitPayment")
-    public String submitPayment(@RequestParam("paymentReceipt") MultipartFile paymentReceipt,
-                                HttpSession session) throws IOException {
-        // Get the booking ID from the session
-        Long bookingId = (Long) session.getAttribute("bookingId");
-
-        // Create a new Payment object and set its attributes
-        Payment payment = new Payment();
-        payment.setBookingId(bookingId);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setPaymentReceipt(paymentReceipt.getBytes());
-
-        // Insert payment into the database
-        String sql = "INSERT INTO payment (bookingid, paymentdate, paymentreceipt) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, payment.getBookingId(), payment.getPaymentDate(), payment.getPaymentReceipt());
-
-        // Redirect to customer view booking page
-        return "redirect:/custViewBooking";
+public String submitPayment(@RequestParam("paymentReceipt") MultipartFile paymentReceipt,
+                            HttpSession session) throws IOException {
+    Long bookingId = (Long) session.getAttribute("bookingId");
+    Double totalPrice = (Double) session.getAttribute("totalPrice");
+    if (bookingId == null || totalPrice == null) {
+        return "redirect:/createBooking";
     }
+
+    Payment payment = new Payment();
+    payment.setBookingId(bookingId);
+    payment.setPaymentDate(LocalDateTime.now());
+    payment.setPaymentReceipt(paymentReceipt.getBytes());
+
+    String sql = "INSERT INTO payment (bookingid, paymentdate, paymentreceipt) VALUES (?, ?, ?)";
+    jdbcTemplate.update(sql, payment.getBookingId(), payment.getPaymentDate(), payment.getPaymentReceipt());
+
+    return "redirect:/custViewBooking";
+}
 }
