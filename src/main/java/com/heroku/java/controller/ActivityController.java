@@ -118,14 +118,16 @@ public class ActivityController {
         // Handle file upload
         String activityImagePath = null;
         if (!activityImage.isEmpty()) {
-            String uploadDirectory = "D:\\kem-tasik-biru\\src\\main\\resources\\uploaded_images\\"; // Define this directory for saving the image
+            String uploadDirectory = "src/main/resources/static/images"; // Define this directory for saving the image
             try {
+                // Ensure the directory exists
+                Files.createDirectories(Paths.get(uploadDirectory));
                 Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
                 Files.write(filePath, activityImage.getBytes());
-                activityImagePath = activityImage.getOriginalFilename(); // Save just the filename or relative path
+                activityImagePath = activityImage.getOriginalFilename(); // Save just the filename
             } catch (IOException e) {
-            e.printStackTrace();
-            // Handle the exception accordingly
+                e.printStackTrace();
+                // Handle the exception accordingly
             }
         }
 
