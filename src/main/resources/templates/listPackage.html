@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Package List</title>
+    <!-- Boxiocns CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
     <link th:href="@{/css/staffBase.css}" rel="stylesheet">
     <link th:href="@{/css/staffNavbar.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -55,7 +57,7 @@
                             <span th:text="${activity.activityName}">ActivityName</span><br>
                         </span>
                     </p>
-                    <a th:href="@{\'/updatePackage/\' + ${package.packageId}}" class="btn btn-info">Update</a>
+                    <a th:href="@{'/updatePackage/' + ${package.packageId}}" class="btn btn-info">Update</a>
                     <a href="javascript:void(0);" th:attr="onclick=\'confirmDelete(\' + ${package.packageId} + \')\' " class="btn btn-danger">Delete</a>
                 </div>
             </div>

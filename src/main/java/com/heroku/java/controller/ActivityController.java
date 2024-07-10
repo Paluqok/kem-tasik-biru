@@ -284,6 +284,7 @@ public String deleteActivity(@PathVariable("id") Long activityId, HttpSession se
 
     String sql = "DELETE FROM public.activity WHERE activityid = ?";
     jdbcTemplate.update(sql, activityId);
+    if("wet".equals(activityType))
     return "redirect:/listActivity";
 }
 
