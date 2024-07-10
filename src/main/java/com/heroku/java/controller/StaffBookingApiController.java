@@ -28,11 +28,8 @@ public class StaffBookingApiController {
     }
 
     @GetMapping("/api/staff/bookings")
-    public ResponseEntity<?> getStaffBookings(HttpSession session) {
-        Staff staff = (Staff) session.getAttribute("staff");
-        if (staff == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
-        }
+    public ResponseEntity<?> getStaffBookings() {
+      
 
         List<Booking> bookings = new ArrayList<>();
         try (Connection conn = dataSource.getConnection()) {
