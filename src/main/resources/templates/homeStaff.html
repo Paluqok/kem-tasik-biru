@@ -77,7 +77,7 @@
           <div class="name-job">
             <div class="profile_name">Log Out</div>
           </div>
-          <i class='bx bx-log-out' ></i>
+          <a th:href="@{/staffLogin}"><i class='bx bx-log-out' ></i></a>
         </div>
       </li>
     </ul>
@@ -88,15 +88,6 @@
         </div>
       </section>
       <!-- Navbar -->
-    </header>
-  
-    <main>
-        
-    </main>
-  
-    <footer></footer>
-  
-    <!--<Script for Navbar>-->
       <script>
         let arrow = document.querySelectorAll(".arrow");
         for (var i = 0; i < arrow.length; i++) {
@@ -112,6 +103,15 @@
           sidebar.classList.toggle("close");
         });
         </script>
+    </header>
+  
+    <main>
+        
+    </main>
+  
+    <footer></footer>
+  
+    <!--<Script for Navbar>-->
     </header>
 </body>
 </html>
