@@ -182,9 +182,10 @@ public class BookingController {
         if (staff == null) {
             return "redirect:/staffLogin";
         }
+        Long staffId = staff.getStaffId();
 
-        String sql = "UPDATE booking SET bookingstatus = 'Approved' WHERE bookingid = ?";
-        jdbcTemplate.update(sql, bookingId);
+        String sql = "UPDATE booking SET bookingstatus = 'Approved', staffid = ? WHERE bookingid = ?";
+        jdbcTemplate.update(sql, staffId, bookingId);
         return "redirect:/staffViewBooking";
     }
 
