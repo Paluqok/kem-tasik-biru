@@ -25,21 +25,21 @@
         </div>
         <ul class="nav-links">
           <li>
-            <a href="#">
+            <a th:href="@{/homeStaff}">
               <i class='bx bx-grid-alt' ></i>
               <span class="link_name">Home</span>
             </a>
             <ul class="sub-menu blank">
-              <li><a class="link_name" href="#">Home</a></li>
+              <li><a class="link_name" th:href="@{/homeStaff}">Home</a></li>
             </ul>
           </li>
           <li>
-            <a href="#">
+            <a th:href="@{/listPackages}">
               <i class='bx bx-pie-chart-alt-2' ></i>
               <span class="link_name">Package</span>
             </a>
             <ul class="sub-menu blank">
-              <li><a class="link_name" href="#">Package</a></li>
+              <li><a class="link_name" th:href="@{/listPackages}">Package</a></li>
             </ul>
           </li>
           <li>
@@ -52,12 +52,12 @@
             </ul>
           </li>
           <li>
-            <a href="#">
+            <a th:href="@{/staffViewBooking}">
               <i class='bx bx-compass' ></i>
-              <span class="link_name">History</span>
+              <span class="link_name">Booking List</span>
             </a>
             <ul class="sub-menu blank">
-              <li><a class="link_name" href="#">History</a></li>
+              <li><a class="link_name" th:href="@{/staffViewBooking}">Booking List</a></li>
             </ul>
           </li>
           <li>
