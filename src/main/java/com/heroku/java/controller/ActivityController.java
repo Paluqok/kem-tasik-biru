@@ -118,7 +118,7 @@ public class ActivityController {
         // Handle file upload
         String activityImagePath = null;
         if (!activityImage.isEmpty()) {
-            String uploadDirectory = "src/main/resources/static/images"; // Define this directory for saving the image
+            String uploadDirectory = "src/main/resources/static/images/"; // Define this directory for saving the image
             try {
                 // Ensure the directory exists
                 Files.createDirectories(Paths.get(uploadDirectory));
