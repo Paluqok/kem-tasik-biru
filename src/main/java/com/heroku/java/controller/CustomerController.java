@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,7 +37,7 @@ public class CustomerController {
     }
 
     @PostMapping("/createAccountCustomer")
-    public String createAccountCustomer(@ModelAttribute("createAccountCustomer") @RequestParam("custName") String custName,
+    public String createAccountCustomer(@RequestParam("custName") String custName,
                                    @RequestParam("custEmail") String custEmail,
                                    @RequestParam("custAddress") String custAddress,
                                    @RequestParam("custPhoneNo") String custPhoneNo,
@@ -73,7 +72,7 @@ public class CustomerController {
                     if (resultSet.next()) {
                         Long custId = resultSet.getLong("custid");
                         cust.setCustId(custId);
-                        System.out.println("Inserted cust with ID: " + custId);
+                        logger.info("Inserted customer with ID: {}", custId);
                     } else {
                         throw new SQLException("Failed to insert cust, no ID obtained.");
                     }
