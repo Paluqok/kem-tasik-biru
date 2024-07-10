@@ -137,7 +137,7 @@ public class BookingController {
             model.addAttribute("bookings", bookings);
 
         }catch(SQLException e){
-
+            e.printStackTrace();
         }
         return "custViewBooking";
     }
