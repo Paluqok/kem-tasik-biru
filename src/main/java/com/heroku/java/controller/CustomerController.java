@@ -173,7 +173,7 @@ public String showUpdateForm(HttpSession session, Model model) {
     if (cust == null) {
         return "redirect:/custLogin";
     }
-    model.addAttribute("cust", cust);
+    model.addAttribute("customer", cust);
     return "customer/custUpdate";
 }
 
