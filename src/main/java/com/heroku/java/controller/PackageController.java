@@ -2,6 +2,7 @@ package com.heroku.java.controller;
 
 import com.heroku.java.model.Package;
 import com.heroku.java.model.Activity;
+import com.heroku.java.model.Customer;
 import com.heroku.java.model.Staff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -60,6 +61,19 @@ public class PackageController {
         return "listPackage";
     }
 
+    @GetMapping("/listPackagesForCustomer")
+    public String listPackagesForCustomer(HttpSession session, Model model) {
+        Customer cust = (Customer) session.getAttribute("cust");
+        if (cust == null ) {
+            return "redirect:/custLogin";
+        }
+
+        String sql = "SELECT * FROM package";
+        List<Package> packages = jdbcTemplate.query(sql, packageRowMapper);
+        model.addAttribute("packages", packages);
+        return "listPackageForCustomer";
+    }
+
     @GetMapping("/createPackage")
     public String createPackageForm(HttpSession session, Model model) {
         Staff staff = (Staff) session.getAttribute("staff");
@@ -113,11 +127,12 @@ public class PackageController {
         List<Activity> activities = jdbcTemplate.query(activitySql, activityRowMapper);
 
         model.addAttribute("package", pkg);
+        model.addAttribute("chosenActivities", pkg.getActivities());
         model.addAttribute("activities", activities);
         return "updatePackage";
     }
 
-    @PostMapping("/updatePackage")
+    @PostMapping("/updatePackage/{packageId}")
     public String updatePackage(HttpSession session, @RequestParam Long packageId, @RequestParam String packageName, @RequestParam List<Long> activityIds) {
         Staff staff = (Staff) session.getAttribute("staff");
         if (staff == null) {
