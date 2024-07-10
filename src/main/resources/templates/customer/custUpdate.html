@@ -56,7 +56,7 @@
     <div class="container">
         <h1>Update Profile</h1>
         <form th:action="@{/updateCustomer}" method="post" onsubmit="return validateEmailAndPhoneAndPassword()">
-            <input type="hidden" name="custId" th:value="${cust.custId}">
+            <input type="hidden" name="custId" th:value="${customer.custId}">
 
             <div class="form-group">
                 <label for="custName" class="details">Name:</label>
