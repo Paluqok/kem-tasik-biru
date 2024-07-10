@@ -150,7 +150,7 @@
 
 <script>
     function deleteActivity(activtiyId) {
-        fetch(`/deleteBooking/${activityId}`, { method: 'POST' })
+        fetch(`/deleteActivity/${activityId}`, { method: 'POST' })
             .then(response => {
                 if (response.ok) {
                     location.reload();

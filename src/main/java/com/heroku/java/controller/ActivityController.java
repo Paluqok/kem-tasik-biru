@@ -35,6 +35,7 @@ import com.heroku.java.model.Staff;
 public class ActivityController {
     private final DataSource dataSource;
 
+    @Autowired
     private JdbcTemplate jdbcTemplate;
     
 
