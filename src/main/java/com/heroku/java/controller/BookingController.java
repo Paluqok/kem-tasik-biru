@@ -148,11 +148,30 @@ public class BookingController {
         if (staff == null) {
             return "redirect:/staffLogin";
         }
+        List<Booking> bookings = new ArrayList<>();
+        try{
+            Connection conn = dataSource.getConnection();
+            String sql = "SELECT b.bookingstartdate,b.bookingenddate,b.bookingstatus,p.packagename,p.packageprice"
+            +" FROM public.booking b JOIN public.package p ON b.packageid = p.packageid";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
 
-        String sql = "SELECT b.*, p.packagename, p.packageprice " +
-                "FROM booking b JOIN package p ON b.packageid = p.packageid";
-        List<Booking> bookings = jdbcTemplate.query(sql, bookingRowMapper);
-        model.addAttribute("bookings", bookings);
+            while(resultSet.next()){
+                Booking booking = new Booking();
+                booking.setBookingStartDate(resultSet.getTimestamp("bookingstartdate").toLocalDateTime());
+                booking.setBookingEndDate(resultSet.getTimestamp("bookingenddate").toLocalDateTime());
+                booking.setBookingStatus(resultSet.getString("bookingstatus"));
+                booking.setPackageName(resultSet.getString("packagename"));
+                booking.setPackagePrice(resultSet.getDouble("packageprice"));
+
+                bookings.add(booking);
+            }
+
+            model.addAttribute("bookings", bookings);
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
         return "staffViewBooking";
     }
 
