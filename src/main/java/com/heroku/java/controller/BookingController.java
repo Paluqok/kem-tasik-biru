@@ -35,6 +35,9 @@ public class BookingController {
             booking.setPackageId(rs.getLong("packageid"));
             booking.setBookingStartDate(rs.getTimestamp("bookingstartdate").toLocalDateTime());
             booking.setBookingEndDate(rs.getTimestamp("bookingenddate").toLocalDateTime());
+            booking.setPackageName(rs.getString("packagename"));
+            booking.setPackagePrice(rs.getDouble("packageprice"));
+            
             return booking;
         }
     };
