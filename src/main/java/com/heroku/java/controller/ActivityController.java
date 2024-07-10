@@ -187,47 +187,91 @@ public class ActivityController {
     return "redirect:/listActivity";
 }
 
-    @GetMapping("/updateActivity/{id}")
-    public String updateActivityForm(@PathVariable Long id, HttpSession session, Model model) {
-        Staff staff = (Staff) session.getAttribute("staff");
-        if (staff == null) {
-            return "redirect:/staffLogin";
-        }
-
-        Activity activity = activities.stream()
-                                      .filter(a -> a.getActivityId().equals(id))
-                                      .findFirst()
-                                      .orElse(null);
-        model.addAttribute("activity", activity);
-        return "updateActivity";
+@GetMapping("/updateActivity/{id}")
+public String updateActivityForm(@PathVariable Long id, HttpSession session, Model model) {
+    Staff staff = (Staff) session.getAttribute("staff");
+    if (staff == null) {
+        return "redirect:/staffLogin";
     }
 
-    @PostMapping("/updateActivity/{id}")
-    public String updateActivity(@PathVariable Long id, HttpSession session,
-                                 @ModelAttribute Activity updatedActivity,
-                                 @RequestParam("activityImage") MultipartFile activityImage) {
-        Staff staff = (Staff) session.getAttribute("staff");
-        if (staff == null) {
-            return "redirect:/staffLogin";
-        }
+    // Fetch the activity by ID
+    String sql = "SELECT a.activityid, a.activityname, a.activityduration, a.activityprice, a.activityimage, " +
+                 "w.activityequipment, d.activitylocation " +
+                 "FROM public.activity a " +
+                 "LEFT JOIN public.wet w ON a.activityid = w.activityid " +
+                 "LEFT JOIN public.dry d ON a.activityid = d.activityid " +
+                 "WHERE a.activityid = ?";
+    Activity activity = null;
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setLong(1, id);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            String name = rs.getString("activityname");
+            String duration = rs.getString("activityduration");
+            double price = rs.getDouble("activityprice");
+            String image = rs.getString("activityimage");
+            String equipment = rs.getString("activityequipment");
+            String location = rs.getString("activitylocation");
 
-        Activity activity = activities.stream()
-                                      .filter(a -> a.getActivityId().equals(id))
-                                      .findFirst()
-                                      .orElse(null);
-
-        if (activity != null) {
-            activity.setActivityName(updatedActivity.getActivityName());
-            activity.setActivityDuration(updatedActivity.getActivityDuration());
-            activity.setActivityPrice(updatedActivity.getActivityPrice());
-
-            if (!activityImage.isEmpty()) {
-                activity.setActivityImage("saved/image/path/" + activityImage.getOriginalFilename());
+            if (equipment != null) {
+                activity = new Wet(id, name, duration, price, image, equipment);
+            } else if (location != null) {
+                activity = new Dry(id, name, duration, price, image, location);
+            } else {
+                activity = new Activity(id, name, duration, price, image);
             }
         }
-
-        return "redirect:/listActivity";
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    model.addAttribute("activity", activity);
+    return "updateActivity";
+}
+
+@PostMapping("/updateActivity/{id}")
+public String updateActivity(@PathVariable Long id, HttpSession session,
+                             @ModelAttribute Activity updatedActivity,
+                             @RequestParam("activityImage") MultipartFile activityImage) {
+    Staff staff = (Staff) session.getAttribute("staff");
+    if (staff == null) {
+        return "redirect:/staffLogin";
+    }
+
+    // SQL for updating activity
+    String sql = "UPDATE public.activity SET activityname = ?, activityduration = ?, activityprice = ?, activityimage = ? WHERE activityid = ?";
+    String activityImagePath = null;
+    if (!activityImage.isEmpty()) {
+        String uploadDirectory = "D:\\kem-tasik-biru\\src\\main\\resources\\uploaded_images\\"; // Define this directory for saving the image
+        try {
+            Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
+            Files.write(filePath, activityImage.getBytes());
+            activityImagePath = activityImage.getOriginalFilename(); // Save just the filename or relative path
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } else {
+        // Retrieve the current image path if no new image is uploaded
+        String currentImagePath = updatedActivity.getActivityImage();
+        activityImagePath = currentImagePath;
+    }
+
+    try (Connection conn = dataSource.getConnection();
+         PreparedStatement statement = conn.prepareStatement(sql)) {
+        statement.setString(1, updatedActivity.getActivityName());
+        statement.setString(2, updatedActivity.getActivityDuration());
+        statement.setDouble(3, updatedActivity.getActivityPrice());
+        statement.setString(4, activityImagePath);
+        statement.setLong(5, id);
+
+        statement.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return "redirect:/listActivity";
+}
 
     @GetMapping("/deleteActivity/{id}")
     public String deleteActivity(@PathVariable Long id, HttpSession session) {
