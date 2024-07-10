@@ -84,7 +84,7 @@ public class BookingController {
         }
 
         // Get the customer ID from session
-        Customer customer = (Customer) session.getAttribute("customer");
+        Customer customer = (Customer) session.getAttribute("cust");
         Long custId = customer.getCustId();
 
         // Insert booking into database
