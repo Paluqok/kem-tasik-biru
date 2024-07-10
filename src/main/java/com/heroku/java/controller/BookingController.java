@@ -2,7 +2,6 @@ package com.heroku.java.controller;
 
 import com.heroku.java.model.Booking;
 import com.heroku.java.model.Package;
-import com.heroku.java.model.Payment;
 import com.heroku.java.model.Customer;
 import com.heroku.java.model.Staff;
 
@@ -36,10 +35,6 @@ public class BookingController {
             booking.setPackageId(rs.getLong("packageid"));
             booking.setBookingStartDate(rs.getTimestamp("bookingstartdate").toLocalDateTime());
             booking.setBookingEndDate(rs.getTimestamp("bookingenddate").toLocalDateTime());
-            booking.setPackageName(rs.getString("packagename"));
-            booking.setPackagePrice(rs.getDouble("packageprice"));
-            booking.setTotalPrice(rs.getDouble("totalprice"));
-            
             return booking;
         }
     };
@@ -68,13 +63,6 @@ public class BookingController {
                                 @RequestParam("bookingEndDate") LocalDateTime bookingEndDate,
                                 @RequestParam("packageId") Long packageId,
                                 HttpSession session, Model model) {
-
-    Customer customer = (Customer) session.getAttribute("customer");
-    if (customer == null) {
-        return "redirect:/custLogin";
-    }
-    Long custId = customer.getCustId();
-
         // Check for date clash
         String clashCheckSql = "SELECT COUNT(*) FROM booking WHERE " +
                 "((bookingstartdate <= ? AND bookingenddate >= ?) OR " +
@@ -95,22 +83,18 @@ public class BookingController {
             return "createBooking";
         }
 
-
-        // Get the package price
-        String sql = "SELECT packageprice FROM package WHERE packageid = ?";
-        double packagePrice = jdbcTemplate.queryForObject(sql, Double.class, packageId);
-
-        // Calculate total price (for simplicity, assuming a fixed cost, adjust as needed)
-        double totalPrice = packagePrice; // Add logic to calculate total price if needed
+        // Get the customer ID from session
+        Customer customer = (Customer) session.getAttribute("cust");
+        Long custId = customer.getCustId();
 
         // Insert booking into database
         String insertSql = "INSERT INTO booking (bookingstatus, staffid, custid, packageid, bookingstartdate, bookingenddate) VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(insertSql, "Pending", null, custId, packageId, bookingStartDate, bookingEndDate);
 
         // Redirect to payment page with total price
+        String packageSql = "SELECT packageprice FROM package WHERE packageid = ?";
+        Double totalPrice = jdbcTemplate.queryForObject(packageSql, Double.class, packageId);
         model.addAttribute("totalPrice", totalPrice);
-        session.setAttribute("totalPrice", totalPrice);
-        
 
         return "redirect:/payment";
     }
@@ -123,8 +107,7 @@ public class BookingController {
         }
         Long custId = customer.getCustId();
 
-        String sql = "SELECT b.bookingid, b.bookingstatus, b.staffid, b.custid, b.packageid, b.bookingstartdate, b.bookingenddate, " +
-                "p.packagename, p.packageprice, p.packageprice as totalprice, b.paymentreceiptid " +
+        String sql = "SELECT b.*, p.packagename, p.packageprice " +
                 "FROM booking b JOIN package p ON b.packageid = p.packageid " +
                 "WHERE b.custid = ?";
         List<Booking> bookings = jdbcTemplate.query(sql, bookingRowMapper, custId);
@@ -139,8 +122,7 @@ public class BookingController {
             return "redirect:/staffLogin";
         }
 
-        String sql = "SELECT b.bookingid, b.bookingstatus, b.staffid, b.custid, b.packageid, b.bookingstartdate, b.bookingenddate, " +
-                "p.packagename, p.packageprice, p.packageprice as totalprice, b.paymentreceiptid " +
+        String sql = "SELECT b.*, p.packagename, p.packageprice " +
                 "FROM booking b JOIN package p ON b.packageid = p.packageid";
         List<Booking> bookings = jdbcTemplate.query(sql, bookingRowMapper);
         model.addAttribute("bookings", bookings);
@@ -148,28 +130,27 @@ public class BookingController {
     }
 
     @PostMapping("/approveBooking/{id}")
-public String approveBooking(@PathVariable("id") Long bookingId, HttpSession session) {
-    Staff staff = (Staff) session.getAttribute("staff");
-    if (staff == null) {
-        return "redirect:/staffLogin";
+    public String approveBooking(@PathVariable("id") Long bookingId, HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+
+        String sql = "UPDATE booking SET bookingstatus = 'Approved' WHERE bookingid = ?";
+        jdbcTemplate.update(sql, bookingId);
+        return "redirect:/staffViewBooking";
     }
-
-    String sql = "UPDATE booking SET bookingstatus = 'Approved' WHERE bookingid = ?";
-    jdbcTemplate.update(sql, bookingId);
-    return "redirect:/staffViewBooking";
-}
-
 
     @PostMapping("/rejectBooking/{id}")
-public String rejectBooking(@PathVariable("id") Long bookingId, HttpSession session) {
-    Staff staff = (Staff) session.getAttribute("staff");
-    if (staff == null) {
-        return "redirect:/staffLogin";
-    }
+    public String rejectBooking(@PathVariable("id") Long bookingId, HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
 
-    String sql = "UPDATE booking SET bookingstatus = 'Rejected' WHERE bookingid = ?";
-    jdbcTemplate.update(sql, bookingId);
-    return "redirect:/staffViewBooking";
-}
+        String sql = "UPDATE booking SET bookingstatus = 'Rejected' WHERE bookingid = ?";
+        jdbcTemplate.update(sql, bookingId);
+        return "redirect:/staffViewBooking";
+    }
 }
 
