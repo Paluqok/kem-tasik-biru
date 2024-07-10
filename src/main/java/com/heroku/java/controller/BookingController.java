@@ -199,5 +199,17 @@ public class BookingController {
         jdbcTemplate.update(sql, bookingId);
         return "redirect:/staffViewBooking";
     }
+    
+    @PostMapping("/deleteBooking/{id}")
+    public String deleteBooking(@PathVariable("id") Long bookingId, HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+
+        String sql = "DELETE FROM public.booking WHERE bookingid = ?";
+        jdbcTemplate.update(sql, bookingId);
+        return "redirect:/staffViewBooking";
+    }
 }
 
