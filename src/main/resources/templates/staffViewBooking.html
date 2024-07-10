@@ -27,10 +27,7 @@
                 <td th:text="${booking.packageName}"></td>
                 <td th:text="${booking.bookingStartDate}"></td>
                 <td th:text="${booking.bookingEndDate}"></td>
-                <td th:text="${booking.totalPrice}"></td>
-                <td>
-                    <a th:href="@{/downloadReceipt/{id}(id=${booking.paymentReceiptId})}">Download</a>
-                </td>
+                <td th:text="${booking.packagePrice}"></td>
                 <td th:text="${booking.bookingStatus}"></td>
                 <td>
                     <button th:onclick="'approveBooking(' + ${booking.bookingId} + ')'" class="btn btn-success">Approve</button>

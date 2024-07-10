@@ -151,13 +151,14 @@ public class BookingController {
         List<Booking> bookings = new ArrayList<>();
         try{
             Connection conn = dataSource.getConnection();
-            String sql = "SELECT b.bookingstartdate,b.bookingenddate,b.bookingstatus,p.packagename,p.packageprice"
+            String sql = "SELECT b.bookingid,b.bookingstartdate,b.bookingenddate,b.bookingstatus,p.packagename,p.packageprice"
             +" FROM public.booking b JOIN public.package p ON b.packageid = p.packageid";
             PreparedStatement statement = conn.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
 
             while(resultSet.next()){
                 Booking booking = new Booking();
+                booking.setBookingId(resultSet.getLong("bookingid"));
                 booking.setBookingStartDate(resultSet.getTimestamp("bookingstartdate").toLocalDateTime());
                 booking.setBookingEndDate(resultSet.getTimestamp("bookingenddate").toLocalDateTime());
                 booking.setBookingStatus(resultSet.getString("bookingstatus"));
