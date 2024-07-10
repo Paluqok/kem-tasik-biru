@@ -135,7 +135,6 @@
                                 <option th:value="${activity.activityId}" th:text="${activity.activityName}"></option>
                             </th:block>
                         </select>
-                        <button type="button" class="btn btn-primary mt-2" onclick="addActivity()">Add</button>
                     </div>
                     <div class="col-md-2 text-center align-self-center">
                         <button type="button" class="btn btn-primary mb-2" onclick="addActivity()">Add</button>
@@ -145,7 +144,6 @@
                         <label for="selectedActivities">Selected Activities:</label>
                         <select id="selectedActivities" name="activityIds" class="form-control list-group" multiple required>
                         </select>
-                        <button type="button" class="btn btn-danger mt-2" onclick="removeActivity()">Remove</button>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">Create Package</button>

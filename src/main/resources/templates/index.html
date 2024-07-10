@@ -26,48 +26,48 @@
       </div>
       <ul class="nav-links">
         <li>
-          <a href="#">
+          <a th:href="@{/custLogin}">
             <i class='bx bx-grid-alt' ></i>
             <span class="link_name">Home</span>
           </a>
           <ul class="sub-menu blank">
-            <li><a class="link_name" href="#">Home</a></li>
+            <li><a class="link_name" th:href="@{/custLogin}">Home</a></li>
           </ul>
         </li>
         <li>
-          <a href="#">
+          <a th:href="@{/custLogin}">
             <i class='bx bx-pie-chart-alt-2' ></i>
             <span class="link_name">Package</span>
           </a>
           <ul class="sub-menu blank">
-            <li><a class="link_name" href="#">Package</a></li>
+            <li><a class="link_name" th:href="@{/custLogin}">Package</a></li>
           </ul>
         </li>
         <li>
-          <a th:href="@{/staffactivity}">
+          <a th:href="@{/custLogin}">
             <i class='bx bx-line-chart' ></i>
             <span class="link_name">Activity</span>
           </a>
           <ul class="sub-menu blank">
-            <li><a class="link_name" th:href="@{/staffactivity}">Activity</a></li>
+            <li><a class="link_name" th:href="@{/custLogin}">Activity</a></li>
           </ul>
         </li>
         <li>
-          <a href="#">
+          <a th:href="@{/custLogin}">
             <i class='bx bx-compass' ></i>
-            <span class="link_name">History</span>
+            <span class="link_name">Booking List</span>
           </a>
           <ul class="sub-menu blank">
-            <li><a class="link_name" href="#">History</a></li>
+            <li><a class="link_name" th:href="@{/custLogin}">Booking List</a></li>
           </ul>
         </li>
         <li>
-          <a th:href="@{/staffSignUp}">
+          <a th:href="@{/custLogin}">
             <i class='bx bx-history'></i>
             <span class="link_name">Profile</span>
           </a>
           <ul class="sub-menu blank">
-            <li><a class="link_name" th:href="@{/staffSignUp}">Profile</a></li>
+            <li><a class="link_name" th:href="@{/custLogin}">Profile</a></li>
           </ul>
         </li>
         <li>
@@ -76,9 +76,9 @@
           <!--<img src="image/profile.jpg" alt="profileImg">-->
         </div>
         <div class="name-job">
-          <div class="profile_name">Log Out</div>
+          <div class="profile_name">SignIn</div>
         </div>
-        <a th:href="@{/staffLogin}"><i class='bx bx-log-out' ></i></a>
+        <a th:href="@{/custLogin}"><i class='bx bx-log-out' ></i></a>
       </div>
     </li>
   </ul>
@@ -89,15 +89,6 @@
       </div>
     </section>
     <!-- Navbar -->
-  </header>
-
-  <main>
-    <button th:href="@{/staffProfile}">Next</button>
-  </main>
-
-  <footer></footer>
-
-  <!--<Script for Navbar>-->
     <script>
       let arrow = document.querySelectorAll(".arrow");
       for (var i = 0; i < arrow.length; i++) {
