@@ -162,7 +162,7 @@ public class CustomerController {
         if (cust == null) {
             return "redirect:/custLogin";
         }
-        model.addAttribute("cust", cust);
+        model.addAttribute("customer", cust);
         return "customer/custProfile";
     }
 
