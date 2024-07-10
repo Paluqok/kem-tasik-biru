@@ -69,7 +69,7 @@
         }
     });
 
-    document.querySelectorAll('input[name="packageId"]').forEach(radio => {
+    document.querySelectorAll('.package-radio').forEach(radio => {
         radio.addEventListener('change', function() {
             const packagePrice = this.getAttribute('data-price');
             document.getElementById('totalPrice').value = packagePrice;
