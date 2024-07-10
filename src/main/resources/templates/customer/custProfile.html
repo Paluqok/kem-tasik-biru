@@ -132,8 +132,8 @@
             <span th:text="${customer.custPhoneNo}"></span>
         </div>
         <div class="btn-container">
-            <a th:href="@{/customer/custUpdate}" class="btn btn-info">Update</a>
-            <form th:action="@{/deleteCust}" method="post">
+            <a th:href="@{/custUpdate}" class="btn btn-info">Update</a>
+            <form action="deleteCust" method="post">
                 <button type="submit" class="btn btn-danger">Delete</button>
             </form>
         </div>
