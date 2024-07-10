@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +38,9 @@ import com.heroku.java.model.Staff;
 public class ActivityController {
     private final DataSource dataSource;
 
+    private JdbcTemplate jdbcTemplate;
     private List<Activity> activities = new ArrayList<>();
+    
 
     @Autowired
     public ActivityController(DataSource dataSource) {
@@ -275,27 +278,17 @@ public String updateActivity(@PathVariable Long id, HttpSession session,
     return "redirect:/listActivity";
 }
 
-    @GetMapping("/deleteActivity/{id}")
-    public String deleteActivity(@PathVariable Long id, HttpSession session) {
-        Staff staff = (Staff) session.getAttribute("staff");
-        if (staff == null) {
-            return "redirect:/staffLogin";
-        }
-
-        activities.removeIf(a -> a.getActivityId().equals(id));
-
-        // Remove from the database
-        String sql = "DELETE FROM public.activity WHERE activityid = ?";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return "redirect:/listActivity";
+@PostMapping("/deleteActivity/{id}")
+public String deleteBooking(@PathVariable("id") Long activityId, HttpSession session) {
+    Staff staff = (Staff) session.getAttribute("staff");
+    if (staff == null) {
+        return "redirect:/staffLogin";
     }
+
+    String sql = "DELETE FROM public.booking WHERE bookingid = ?";
+    jdbcTemplate.update(sql, activityId);
+    return "redirect:/listActivity";
+}
 
     
 }

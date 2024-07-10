@@ -141,11 +141,24 @@
                         </span>
                     </p>
                     <a th:href="@{'/updateActivity/' + ${activity.activityId}}" class="btn btn-info">Update</a>
-                    <a href="javascript:void(0);" th:attr="onclick='confirmDelete(' + ${activity.activityId} + ')' " class="btn btn-danger">Delete</a>
+                    <button th:onclick="'deleteActivity(' + ${activity.activityId} + ')'" class="btn btn-danger">Delete</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function deleteActivity(activtiyId) {
+        fetch(`/deleteBooking/${activityId}`, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete booking');
+                }
+            });
+    }
+</script>
 </body>
 </html>
