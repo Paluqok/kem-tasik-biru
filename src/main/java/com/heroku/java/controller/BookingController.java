@@ -13,16 +13,27 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 @Controller
 public class BookingController {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    private final DataSource dataSource;
+     @Autowired
+    public BookingController(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     private final RowMapper<Booking> bookingRowMapper = new RowMapper<>() {
         @Override
@@ -101,17 +112,33 @@ public class BookingController {
 
     @GetMapping("/custViewBooking")
     public String customerViewBooking(HttpSession session, Model model) {
-        Customer customer = (Customer) session.getAttribute("cust");
-        if (customer == null) {
-            return "redirect:/custLogin";
-        }
-        Long custId = customer.getCustId();
+        Long custid = (Long) session.getAttribute("custid");
 
-        String sql = "SELECT b.*, p.packagename, p.packageprice " +
-                "FROM booking b JOIN package p ON b.packageid = p.packageid " +
-                "WHERE b.custid = ?";
-        List<Booking> bookings = jdbcTemplate.query(sql, bookingRowMapper, custId);
-        model.addAttribute("bookings", bookings);
+        List<Booking> bookings = new ArrayList<>();
+        try{
+            Connection conn = dataSource.getConnection();
+            String sql = "SELECT b.bookingstartdate,b.bookingenddate,b.bookingstatus,p.packagename,p.packageprice"
+            +"FROM public.booking b JOIN public.package ON b.packageid = p.packageid WHERE custid=?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setLong(1, custid);
+            ResultSet resultSet = statement.executeQuery();
+
+            while(resultSet.next()){
+                Booking booking = new Booking();
+                booking.setBookingStartDate(resultSet.getTimestamp("bookingstartdate").toLocalDateTime());
+                booking.setBookingEndDate(resultSet.getTimestamp("bookingenddate").toLocalDateTime());
+                booking.setBookingStatus(resultSet.getString("bookingstatus"));
+                booking.setPackageName(resultSet.getString("packagename"));
+                booking.setPackagePrice(resultSet.getDouble("packageprice"));
+
+                bookings.add(booking);
+            }
+
+            model.addAttribute("bookings", bookings);
+
+        }catch(SQLException e){
+
+        }
         return "custViewBooking";
     }
 

@@ -16,7 +16,6 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Total Price</th>
-            <th>Payment Receipt</th>
             <th>Status</th>
         </tr>
         </thead>
@@ -26,10 +25,7 @@
                 <td th:text="${booking.packageName}"></td>
                 <td th:text="${booking.bookingStartDate}"></td>
                 <td th:text="${booking.bookingEndDate}"></td>
-                <td th:text="${booking.totalPrice}"></td>
-                <td>
-                    <a th:href="@{/downloadReceipt/{id}(id=${booking.bookingId})}">Download</a>
-                </td>
+                <td th:text="${booking.packagePrice}"></td>
                 <td th:text="${booking.bookingStatus}"></td>
             </tr>
         </th:block>

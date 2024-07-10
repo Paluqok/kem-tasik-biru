@@ -10,6 +10,8 @@ public class Booking {
     private Long packageId;
     private LocalDateTime bookingStartDate;
     private LocalDateTime bookingEndDate;
+    private String packageName;
+    private double packagePrice;
 
     // Getters and Setters
     public Long getBookingId() {
@@ -67,4 +69,21 @@ public class Booking {
     public void setBookingEndDate(LocalDateTime bookingEndDate) {
         this.bookingEndDate = bookingEndDate;
     }
+
+    public void setPackageName(String packageName){
+        this.packageName=packageName;
+    }
+
+    public String getPackageName(){
+        return packageName;
+    }
+
+    public void setPackagePrice(double packagePrice){
+        this.packagePrice=packagePrice;
+    }
+
+    public double getPackagePrice(){
+        return packagePrice;
+    }
+ 
 }
