@@ -279,7 +279,7 @@ public String updateActivity(@PathVariable Long id, HttpSession session,
 }
 
 @PostMapping("/deleteActivity/{id}")
-public String deleteBooking(@PathVariable("id") Long activityId, HttpSession session) {
+public String deleteActivity(@PathVariable("id") Long activityId, HttpSession session) {
     Staff staff = (Staff) session.getAttribute("staff");
     if (staff == null) {
         return "redirect:/staffLogin";
