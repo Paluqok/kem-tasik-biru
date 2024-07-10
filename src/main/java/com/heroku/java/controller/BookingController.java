@@ -118,7 +118,7 @@ public class BookingController {
         try{
             Connection conn = dataSource.getConnection();
             String sql = "SELECT b.bookingstartdate,b.bookingenddate,b.bookingstatus,p.packagename,p.packageprice"
-            +"FROM public.booking b JOIN public.package ON b.packageid = p.packageid WHERE custid=?";
+            +"FROM public.booking b JOIN public.package p ON b.packageid = p.packageid WHERE custid=?";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setLong(1, custid);
             ResultSet resultSet = statement.executeQuery();
