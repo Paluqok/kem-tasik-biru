@@ -3,6 +3,8 @@ package com.heroku.java.controller;
 import com.heroku.java.model.Booking;
 import com.heroku.java.model.Package;
 import com.heroku.java.model.Customer;
+import com.heroku.java.model.Staff;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,7 +40,12 @@ public class BookingController {
     };
 
     @GetMapping("/createBooking")
-    public String showCreateBookingForm(Model model) {
+    public String showCreateBookingForm(HttpSession session, Model model) {
+        Customer customer = (Customer) session.getAttribute("cust");
+        if (customer == null) {
+            return "redirect:/custLogin";
+        }
+
         String sql = "SELECT * FROM package";
         List<Package> packages = jdbcTemplate.query(sql, (rs, rowNum) -> {
             Package pkg = new Package();
@@ -94,7 +101,10 @@ public class BookingController {
 
     @GetMapping("/custViewBooking")
     public String customerViewBooking(HttpSession session, Model model) {
-        Customer customer = (Customer) session.getAttribute("customer");
+        Customer customer = (Customer) session.getAttribute("cust");
+        if (customer == null) {
+            return "redirect:/custLogin";
+        }
         Long custId = customer.getCustId();
 
         String sql = "SELECT b.*, p.packagename, p.packageprice " +
@@ -106,7 +116,12 @@ public class BookingController {
     }
 
     @GetMapping("/staffViewBooking")
-    public String staffViewBooking(Model model) {
+    public String staffViewBooking(HttpSession session, Model model) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+
         String sql = "SELECT b.*, p.packagename, p.packageprice " +
                 "FROM booking b JOIN package p ON b.packageid = p.packageid";
         List<Booking> bookings = jdbcTemplate.query(sql, bookingRowMapper);
@@ -115,14 +130,24 @@ public class BookingController {
     }
 
     @PostMapping("/approveBooking/{id}")
-    public String approveBooking(@PathVariable("id") Long bookingId) {
+    public String approveBooking(@PathVariable("id") Long bookingId, HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+
         String sql = "UPDATE booking SET bookingstatus = 'Approved' WHERE bookingid = ?";
         jdbcTemplate.update(sql, bookingId);
         return "redirect:/staffViewBooking";
     }
 
     @PostMapping("/rejectBooking/{id}")
-    public String rejectBooking(@PathVariable("id") Long bookingId) {
+    public String rejectBooking(@PathVariable("id") Long bookingId, HttpSession session) {
+        Staff staff = (Staff) session.getAttribute("staff");
+        if (staff == null) {
+            return "redirect:/staffLogin";
+        }
+
         String sql = "UPDATE booking SET bookingstatus = 'Rejected' WHERE bookingid = ?";
         jdbcTemplate.update(sql, bookingId);
         return "redirect:/staffViewBooking";
