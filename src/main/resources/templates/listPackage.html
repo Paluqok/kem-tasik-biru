@@ -58,7 +58,7 @@
                         </span>
                     </p>
                     <a th:href="@{'/updatePackage/' + ${package.packageId}}" class="btn btn-info">Update</a>
-                    <button th:onclick="'deleteActivity(' + ${activity.activityId} + ')'" class="btn btn-danger">Delete</button>
+                    <button th:onclick="'deletePackage(' + ${package.packageId} + ')'" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>
