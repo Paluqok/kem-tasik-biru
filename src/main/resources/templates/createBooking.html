@@ -36,7 +36,7 @@
                 <th:block th:each="pkg : ${packages}">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="packageId" th:id="${pkg.packageId}" th:value="${pkg.packageId}" required>
-                        <label class="form-check-label" th:for="${pkg.packageId}" th:text="${pkg.packageName}"></label>
+                        <label class="form-check-label" th:for="${pkg.packageId}" th:text="${pkg.packageName} + ' (RM' + ${pkg.packagePrice} + ')'"></label>
                     </div>
                 </th:block>
             </div>
