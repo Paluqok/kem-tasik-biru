@@ -108,7 +108,7 @@
     <div class="row">
         <div class="col-12">
             <h2>Update Package</h2>
-            <form th:action="@{/updatePackage}" th:object="${package}" method="post">
+            <form action="/updatePackage/${package.id}" th:object="${package}" method="post">
                 <input type="hidden" id="packageId" name="packageId" th:field="*{packageId}">
                 <div class="form-group">
                     <label for="packageName">Package Name</label>
