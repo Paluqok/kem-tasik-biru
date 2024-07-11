@@ -110,22 +110,21 @@
       </div>
   </div>
   <div class="row">
-      <div th:each="package : ${packages}" class="col-md-3 mb-4">
-          <div class="card">
-              <div class="card-body">
-                  <h5 class="card-title" th:text="${package.packageName}">Package Name</h5>
-                  <p class="card-text">
-                      Price: <span th:text="${package.packagePrice}">Package Price</span><br>
-                      <span th:each="activity : ${package.activities}">
-                          <span th:text="${activity.activityName}">Activity Name</span><br>
-                      </span>
-                  </p>
-                  <a th:href="@{'/updatePackage/' + ${package.packageId}}" class="btn btn-info">Update</a>
-                  <button th:onclick="'confirmDelete(' + ${package.packageId} + ')'" class="btn btn-danger">Delete</button>
-              </div>
-          </div>
-      </div>
-  </div>
+    <div th:each="package : ${packages}" class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${package.packageName}">Package Name</h5>
+                <p class="card-text">
+                    Price: <span th:text="${package.packagePrice}">Package Price</span><br>
+                    <span th:each="activity : ${package.activities}">
+                        <span th:text="${activity.activityName}">Activity Name</span><br>
+                    </span>
+                </p>
+                <a th:href="@{'/updatePackage/' + ${package.packageId}}" class="btn btn-info">Update</a>
+                <button th:onclick="'confirmDelete(' + ${package.packageId} + ')'" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     function confirmDelete(packageId) {

@@ -108,7 +108,7 @@
     <div class="row">
         <div class="col-12">
             <h2>Update Package</h2>
-            <form th:action="@{'/updatePackage/' + ${package.packageId}}" method="post" th:object="${package}">
+            <form th:action="@{'/updatePackage/' + ${package.packageId}}" method="post">
                 <input type="hidden" id="packageId" name="packageId" th:field="*{packageId}">
                 <div class="form-group">
                     <label for="packageName">Package Name</label>
@@ -118,36 +118,19 @@
                     <label for="packagePrice">Package Price</label>
                     <input type="number" class="form-control" id="packagePrice" name="packagePrice" th:value="*{packagePrice}" required>
                 </div>
-                <!-- <div class="form-group">
-                    <label for="activities">Select Activities</label>
-                    <select multiple class="form-control" id="activities" name="activities">
-                        <option th:each="activity : ${activities}" th:value="${activity.activityId}" th:text="${activity.activityName}" th:selected="${activity.activityId in package.activityIds}"></option>
-                        <option th:each="activity : ${activities}" th:value="${activity.activityId}" th:text="${activity.activityName}" th:selected="${package.getActivities().contains(activity)}"></option>
-                        <option th:each="activity : ${activities}" th:value="${activity.activityId}" th:text="${activity.activityName}"></option>
-                    </select>
-                </div> -->
-
                 <div class="form-group row">
                     <div class="col-md-5">
                         <label for="availableActivities">Available Activities:</label>
                         <select id="availableActivities" class="form-control list-group" multiple>
-                            <!-- Iterate over activities and display each one -->
                             <th:block th:each="activity : ${activities}">
                                 <option th:value="${activity.activityId}" th:text="${activity.activityName}"></option>
                             </th:block>
                         </select>
                         <button type="button" class="btn btn-primary mt-2" onclick="addActivity()">Add</button>
                     </div>
-                    <!-- <div class="col-md-2 text-center align-self-center">
-                        <button type="button" class="btn btn-primary mb-2" onclick="addActivity()">Add</button>
-                        <button type="button" class="btn btn-danger mb-2" onclick="removeActivity()">Remove</button>
-                    </div> -->
                     <div class="col-md-5">
                         <label for="selectedActivities">Selected Activities:</label>
-                        <!-- <select id="selectedActivities" name="activityIds" class="form-control list-group" multiple required>
-                        </select> -->
                         <select id="selectedActivities" class="form-control list-group" multiple>
-                            <!-- Iterate over activities and display each one -->
                             <th:block th:each="act : ${chosenActivities}">
                                 <option th:value="${act.activityId}" th:text="${act.activityName}"></option>
                             </th:block>
@@ -155,6 +138,7 @@
                         <button type="button" class="btn btn-danger mt-2" onclick="removeActivity()">Remove</button>
                     </div>
                 </div>
+                <input type="hidden" name="activityIds" id="activityIds">
                 <button type="submit" class="btn btn-primary">Update Package</button>
             </form>
         </div>
