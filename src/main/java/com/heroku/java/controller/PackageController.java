@@ -129,40 +129,40 @@ public String listPackages(HttpSession session, Model model) {
     }
 
     @GetMapping("/updatePackage/{id}")
-public String showUpdateForm(@PathVariable("id") int packageId, Model model) {
-    String packageQuery = "SELECT * FROM package WHERE packageid = ?";
-    Package pkg = jdbcTemplate.queryForObject(packageQuery, new BeanPropertyRowMapper<>(Package.class), packageId);
+    public String showUpdateForm(@PathVariable("id") int packageId, Model model) {
+        String packageQuery = "SELECT * FROM package WHERE packageid = ?";
+        Package pkg = jdbcTemplate.queryForObject(packageQuery, new BeanPropertyRowMapper<>(Package.class), packageId);
 
-    String activityQuery = "SELECT * FROM activity";
-    List<Activity> activities = jdbcTemplate.query(activityQuery, new BeanPropertyRowMapper<>(Activity.class));
+        String activityQuery = "SELECT * FROM activity";
+        List<Activity> activities = jdbcTemplate.query(activityQuery, new BeanPropertyRowMapper<>(Activity.class));
 
-    String chosenActivitiesQuery = "SELECT a.activityid, a.activityname FROM activity a JOIN packageactivity pa ON a.activityid = pa.activityid WHERE pa.packageid = ?";
-    List<Activity> chosenActivities = jdbcTemplate.query(chosenActivitiesQuery, new BeanPropertyRowMapper<>(Activity.class), packageId);
+        String chosenActivitiesQuery = "SELECT a.activityid, a.activityname FROM activity a JOIN packageactivity pa ON a.activityid = pa.activityid WHERE pa.packageid = ?";
+        List<Activity> chosenActivities = jdbcTemplate.query(chosenActivitiesQuery, new BeanPropertyRowMapper<>(Activity.class), packageId);
 
-    model.addAttribute("package", pkg);
-    model.addAttribute("activities", activities);
-    model.addAttribute("chosenActivities", chosenActivities);
-    return "updatePackage";
-}
-
-@PostMapping("/updatePackage/{id}")
-public String updatePackage(@PathVariable("id") int packageId,
-                            @RequestParam("packageName") String packageName,
-                            @RequestParam("packagePrice") double packagePrice,
-                            @RequestParam("activityIds") List<Integer> activityIds) {
-    String updatePackageQuery = "UPDATE package SET packagename = ?, packageprice = ? WHERE packageid = ?";
-    jdbcTemplate.update(updatePackageQuery, packageName, packagePrice, packageId);
-
-    String deleteActivitiesQuery = "DELETE FROM packageactivity WHERE packageid = ?";
-    jdbcTemplate.update(deleteActivitiesQuery, packageId);
-
-    for (Integer activityId : activityIds) {
-        String insertActivityQuery = "INSERT INTO packageactivity (packageid, activityid) VALUES (?, ?)";
-        jdbcTemplate.update(insertActivityQuery, packageId, activityId);
+        model.addAttribute("package", pkg);
+        model.addAttribute("activities", activities);
+        model.addAttribute("chosenActivities", chosenActivities);
+        return "updatePackage";
     }
 
-    return "redirect:/listPackages";
-}
+    @PostMapping("/updatePackage/{id}")
+    public String updatePackage(@PathVariable("id") int packageId,
+                                @RequestParam("packageName") String packageName,
+                                @RequestParam("packagePrice") double packagePrice,
+                                @RequestParam("activityIds") List<Integer> activityIds) {
+        String updatePackageQuery = "UPDATE package SET packagename = ?, packageprice = ? WHERE packageid = ?";
+        jdbcTemplate.update(updatePackageQuery, packageName, packagePrice, packageId);
+
+        String deleteActivitiesQuery = "DELETE FROM packageactivity WHERE packageid = ?";
+        jdbcTemplate.update(deleteActivitiesQuery, packageId);
+
+        for (Integer activityId : activityIds) {
+            String insertActivityQuery = "INSERT INTO packageactivity (packageid, activityid) VALUES (?, ?)";
+            jdbcTemplate.update(insertActivityQuery, packageId, activityId);
+        }
+
+        return "redirect:/listPackages";
+    }
 
     @GetMapping("/deletePackage/{packageId}")
     public String deletePackage(@PathVariable Long packageId, HttpSession session) {
