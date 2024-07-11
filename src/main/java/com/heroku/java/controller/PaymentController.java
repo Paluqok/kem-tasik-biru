@@ -30,9 +30,8 @@ public class PaymentController {
 public String submitPayment(@RequestParam("paymentReceipt") MultipartFile paymentReceipt,
                             HttpSession session) throws IOException {
     Long bookingId = (Long) session.getAttribute("bookingId");
-    Double totalPrice = (Double) session.getAttribute("totalPrice");
-    if (bookingId == null || totalPrice == null) {
-        return "redirect:/createBooking";
+    if (bookingId == null) {
+        return "redirect:/custViewBooking";
     }
 
     Payment payment = new Payment();
