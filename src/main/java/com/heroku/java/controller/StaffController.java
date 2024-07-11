@@ -35,11 +35,12 @@ public class StaffController {
     }
      
     @GetMapping("/staffSignUp")
-    public String createStaffAccount(Model model) {
+    public String createStaffAccount(Model model){
         try (Connection connection = dataSource.getConnection()) {
             String sql = "SELECT staffid, staffname FROM public.staff WHERE managerid IS NULL";
             try (PreparedStatement statement = connection.prepareStatement(sql);
                  ResultSet resultSet = statement.executeQuery()) {
+
                 List<Staff> managers = new ArrayList<>();
                 while (resultSet.next()) {
                     Staff manager = new Staff();
@@ -51,7 +52,6 @@ public class StaffController {
             }
         } catch (SQLException e) {
             logger.error("Error fetching managers", e);
-            throw new RuntimeException("Failed to fetch managers", e);
         }
         return "staff/staffSignUp";
     }
@@ -72,7 +72,10 @@ public class StaffController {
         staff.setStaffPhoneNo(staffPhoneNo);
         staff.setStaffPassword(staffPassword);
 
+        Long assignedManagerId = "staff".equals(userType) ? managerId : null;
+
         try (Connection connection = dataSource.getConnection()) {
+            String staffSql = "INSERT INTO public.staff(staffname, staffemail, staffaddress, staffphoneno, staffpassword, managerid) VALUES (?, ?, ?, ?, ?, ?) RETURNING staffid";
 
             System.out.println("Received staff details:");
             System.out.println("Name: " + staff.getStaffName());
@@ -81,19 +84,14 @@ public class StaffController {
             System.out.println("Phone No: " + staff.getStaffPhoneNo());
             System.out.println("Password: " + staff.getStaffPassword());
 
-            String staffSql;
-            if ("manager".equals(userType)) {
-                staffSql = "INSERT INTO public.staff(staffname, staffemail, staffaddress, staffphoneno, staffpassword, managerid) VALUES (?, ?, ?, ?, ?, NULL) RETURNING staffid";
-            } else {
-                staffSql = "INSERT INTO public.staff(staffname, staffemail, staffaddress, staffphoneno, staffpassword, managerid) VALUES (?, ?, ?, ?, ?, ?) RETURNING staffid";
-            }
 
             try (PreparedStatement statement = connection.prepareStatement(staffSql)) {
                 statement.setString(1, staff.getStaffName());
                 statement.setString(2, staff.getStaffEmail());
                 statement.setString(3, staff.getStaffAddress());
                 statement.setString(4, staff.getStaffPhoneNo());
-                statement.setString(5, staff.getStaffPassword()); // Set the Base64-encoded image
+                statement.setString(5, staff.getStaffPassword());
+                statement.setObject(6, assignedManagerId); // Set the Base64-encoded image
 
                 if ("staff".equals(userType)) {
                     statement.setLong(6, managerId);
