@@ -280,51 +280,94 @@ public class ActivityController {
     }
 
     @PostMapping("/updateActivity/{id}")
-    public String updateActivity(@PathVariable Long id, HttpSession session,
-                                @ModelAttribute Activity updatedActivity,
-                                @RequestParam("activityImage") MultipartFile activityImage) {
-        Staff staff = (Staff) session.getAttribute("staff");
-        if (staff == null) {
-            return "redirect:/staffLogin";
-        }
+public String updateActivity(@PathVariable Long id, HttpSession session,
+                             @ModelAttribute Activity updatedActivity,
+                             @RequestParam("activityImage") MultipartFile activityImage,
+                             @RequestParam("activityType") String activityType,
+                             @RequestParam(value = "equipment", required = false) String equipment,
+                             @RequestParam(value = "location", required = false) String location) {
+    Staff staff = (Staff) session.getAttribute("staff");
+    if (staff == null) {
+        return "redirect:/staffLogin";
+    }
 
-        // SQL for updating activity
-        String sql = "UPDATE public.activity SET activityname = ?, activityduration = ?, activityprice = ?, activityimage = ? WHERE activityid = ?";
-        String activityImagePath = null;
-        if (!activityImage.isEmpty()) {
-            // MacOS: This uploadDirectory variable might not work with Windows devices/systems
-            String uploadDirectory = "src/main/resources/images/"; // Define this directory for saving the image
-            // Windows: Try this if you use Windows devices/systems
-            // NOTE: you might need to change the value since it's hard-coded
-            // String uploadDirectory = "D:\\kem-tasik-biru\\src\\main\\resources\\uploaded_images\\"; // Define this directory for saving the image
-            try {
-                Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
-                Files.write(filePath, activityImage.getBytes());
-                activityImagePath = activityImage.getOriginalFilename(); // Save just the filename or relative path
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // Retrieve the current image path if no new image is uploaded
-            String currentImagePath = updatedActivity.getActivityImage();
-            activityImagePath = currentImagePath;
-        }
+    String activityImagePath = handleImageUpload(activityImage, updatedActivity.getActivityImage());
 
-        try (Connection conn = dataSource.getConnection();
-            PreparedStatement statement = conn.prepareStatement(sql)) {
+    try (Connection conn = dataSource.getConnection()) {
+        conn.setAutoCommit(false);
+
+        // Update activity table
+        String activitySql = "UPDATE public.activity SET activityname = ?, activityduration = ?, activityprice = ?, activityimage = ? WHERE activityid = ?";
+        try (PreparedStatement statement = conn.prepareStatement(activitySql)) {
             statement.setString(1, updatedActivity.getActivityName());
             statement.setString(2, updatedActivity.getActivityDuration());
             statement.setDouble(3, updatedActivity.getActivityPrice());
             statement.setString(4, activityImagePath);
             statement.setLong(5, id);
-
             statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
-        return "redirect:/listActivity";
+        // Update wet or dry table
+        if ("wet".equals(activityType)) {
+            updateWetActivity(conn, id, equipment);
+        } else if ("dry".equals(activityType)) {
+            updateDryActivity(conn, id, location);
+        }
+
+        conn.commit();
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return "redirect:/error";
     }
+
+    return "redirect:/listActivity";
+}
+
+private String handleImageUpload(MultipartFile activityImage, String currentImagePath) {
+    if (!activityImage.isEmpty()) {
+        String uploadDirectory = "src/main/resources/static/images/";
+        try {
+            Path filePath = Paths.get(uploadDirectory + activityImage.getOriginalFilename());
+            Files.write(filePath, activityImage.getBytes());
+            return activityImage.getOriginalFilename();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    return currentImagePath;
+}
+
+private void updateWetActivity(Connection conn, Long activityId, String equipment) throws SQLException {
+    String deleteDrySql = "DELETE FROM public.dry WHERE activityid = ?";
+    String upsertWetSql = "INSERT INTO public.wet (activityid, activityequipment) VALUES (?, ?) ON CONFLICT (activityid) DO UPDATE SET activityequipment = EXCLUDED.activityequipment";
+    
+    try (PreparedStatement deleteStmt = conn.prepareStatement(deleteDrySql);
+         PreparedStatement upsertStmt = conn.prepareStatement(upsertWetSql)) {
+        
+        deleteStmt.setLong(1, activityId);
+        deleteStmt.executeUpdate();
+
+        upsertStmt.setLong(1, activityId);
+        upsertStmt.setString(2, equipment);
+        upsertStmt.executeUpdate();
+    }
+}
+
+private void updateDryActivity(Connection conn, Long activityId, String location) throws SQLException {
+    String deleteWetSql = "DELETE FROM public.wet WHERE activityid = ?";
+    String upsertDrySql = "INSERT INTO public.dry (activityid, activitylocation) VALUES (?, ?) ON CONFLICT (activityid) DO UPDATE SET activitylocation = EXCLUDED.activitylocation";
+    
+    try (PreparedStatement deleteStmt = conn.prepareStatement(deleteWetSql);
+         PreparedStatement upsertStmt = conn.prepareStatement(upsertDrySql)) {
+        
+        deleteStmt.setLong(1, activityId);
+        deleteStmt.executeUpdate();
+
+        upsertStmt.setLong(1, activityId);
+        upsertStmt.setString(2, location);
+        upsertStmt.executeUpdate();
+    }
+}
 
 @PostMapping("/deleteActivity/{id}")
 public String deleteActivity(@PathVariable("id") Long activityId, HttpSession session) {
