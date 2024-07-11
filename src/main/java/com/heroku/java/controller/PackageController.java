@@ -136,7 +136,7 @@ public String listPackages(HttpSession session, Model model) {
         String activityQuery = "SELECT * FROM activity";
         List<Activity> activities = jdbcTemplate.query(activityQuery, new BeanPropertyRowMapper<>(Activity.class));
 
-        String chosenActivitiesQuery = "SELECT a.activityid, a.activityname FROM activity a JOIN package_activity pa ON a.activityid = pa.activityid WHERE pa.packageid = ?";
+        String chosenActivitiesQuery = "SELECT a.activityid, a.activityname FROM activity a JOIN packageactivity pa ON a.activityid = pa.activityid WHERE pa.packageid = ?";
         List<Activity> chosenActivities = jdbcTemplate.query(chosenActivitiesQuery, new BeanPropertyRowMapper<>(Activity.class), id);
 
         model.addAttribute("package", pkg);
@@ -153,11 +153,11 @@ public String listPackages(HttpSession session, Model model) {
         String updatePackageQuery = "UPDATE package SET packagename = ?, packageprice = ? WHERE packageid = ?";
         jdbcTemplate.update(updatePackageQuery, packageName, packagePrice, id);
 
-        String deleteActivitiesQuery = "DELETE FROM package_activity WHERE packageid = ?";
+        String deleteActivitiesQuery = "DELETE FROM packageactivity WHERE packageid = ?";
         jdbcTemplate.update(deleteActivitiesQuery, id);
 
         for (Integer activityId : activityIds) {
-            String insertActivityQuery = "INSERT INTO package_activity (packageid, activityid) VALUES (?, ?)";
+            String insertActivityQuery = "INSERT INTO packageactivity (packageid, activityid) VALUES (?, ?)";
             jdbcTemplate.update(insertActivityQuery, id, activityId);
         }
 
