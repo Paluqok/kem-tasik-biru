@@ -203,9 +203,9 @@ public class BookingController {
     
     @PostMapping("/deleteBooking/{id}")
     public String deleteBooking(@PathVariable("id") Long bookingId, HttpSession session) {
-        Staff staff = (Staff) session.getAttribute("staff");
-        if (staff == null) {
-            return "redirect:/staffLogin";
+        Customer cust = (Customer) session.getAttribute("cust");
+        if (cust == null) {
+            return "redirect:/custLogin";
         }
 
         String sql = "DELETE FROM public.booking WHERE bookingid = ?";

@@ -114,7 +114,6 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Total Price</th>
-            <th>Payment Receipt</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
@@ -130,7 +129,6 @@
                 <td>
                     <button th:onclick="'approveBooking(' + ${booking.bookingId} + ')'" class="btn btn-success">Approve</button>
                     <button th:onclick="'rejectBooking(' + ${booking.bookingId} + ')'" class="btn btn-danger">Reject</button>
-                    <button th:onclick="'deleteBooking(' + ${booking.bookingId} + ')'" class="btn btn-danger">Delete</button>
                 </td>
             </tr>
         </th:block>
@@ -156,17 +154,6 @@
                     location.reload();
                 } else {
                     alert('Failed to reject booking');
-                }
-            });
-    }
-
-    function deleteBooking(bookingId) {
-        fetch(`/deleteBooking/${bookingId}`, { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    location.reload();
-                } else {
-                    alert('Failed to delete booking');
                 }
             });
     }
