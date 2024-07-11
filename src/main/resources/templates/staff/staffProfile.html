@@ -154,10 +154,18 @@
         </div>
         <div class="btn-container">
             <a th:href="@{/staffUpdate}" class="btn btn-info">Update</a>
-            <form action="/deleteStaff" method="post">
-                <button type="submit" class="btn btn-danger">Delete</button>
+            <form action="/deleteStaff" method="post" id="deleteForm">
+                <button type="submit" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
             </form>
         </div>
     </div>
+
+    <script>
+      function confirmDelete(){
+        if (confirm("Are you sure you want to delete your profile?")){
+          document.getElementByid('deleteForm').submit;
+        }
+      }
+    </script>
 </body>
 </html>
