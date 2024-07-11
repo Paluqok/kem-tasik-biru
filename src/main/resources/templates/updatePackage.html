@@ -108,15 +108,15 @@
     <div class="row">
         <div class="col-12">
             <h2>Update Package</h2>
-            <form action="/updatePackage/{package.id}" th:object="${package}" method="post">
-                <input type="hidden" id="packageId" name="packageId" th:field="*{packageId}">
+            <form action="/updatePackage/${package.packageId}" method="post">
+                <input type="hidden" id="packageId" name="packageId" value="${package.packageId}">
                 <div class="form-group">
                     <label for="packageName">Package Name</label>
-                    <input type="text" class="form-control" id="packageName" name="packageName" th:value="*{packageName}" required>
+                    <input type="text" class="form-control" id="packageName" name="packageName" value="${package.packageName}" required>
                 </div>
                 <div class="form-group">
                     <label for="packagePrice">Package Price</label>
-                    <input type="number" class="form-control" id="packagePrice" name="packagePrice" th:value="*{packagePrice}" required>
+                    <input type="number" class="form-control" id="packagePrice" name="packagePrice" value="${package.packagePrice}" required>
                 </div>
                 <div class="form-group row">
                     <div class="col-md-5">
