@@ -57,7 +57,12 @@
                 return false;
             }
             return true;
-        }Xr
+        }
+
+        function toggleManagerDropdown() {
+            const isStaff = document.getElementById('staff').checked;
+            document.getElementById('managerDropdown').style.display = isStaff ? 'block' : 'none';
+        }
     </script>
 </head>
 <body>
@@ -90,11 +95,19 @@
                 <input type="password" class="form-control" id="checkPassword" name="checkPassword" required>
             </div>
             <div class="form-group">
-                <label for="activityType">User Type:</label><br>
+                <label for="userType">User Type:</label><br>
                 <label for="staff">Staff</label>
                 <input type="radio" id="staff" name="staff" value="staff">
                 <label for="manager">Manager</label>
                 <input type="radio" id="manager" name="manager" value="manager">
+            </div>
+            <div class="form-group" id="managerDropdown" style="display: none;">
+                <label for="managerId">Select Manager:</label>
+                <select id="managerId" name="managerId" class="form-control">
+                    <option value="">-- Select Manager --</option>
+                    <!-- Options will be populated dynamically -->
+                    <option th:each="manager : ${managers}" th:value="${manager.staffId}" th:text="${manager.staffName}"></option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Sign Up</button>
 
