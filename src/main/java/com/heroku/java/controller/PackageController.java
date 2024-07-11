@@ -57,6 +57,13 @@ public class PackageController {
 
         String sql = "SELECT * FROM package";
         List<Package> packages = jdbcTemplate.query(sql, packageRowMapper);
+
+        for (Package pkg : packages) {
+            String activitySql = "SELECT a.* FROM activity a JOIN packageactivity pa ON a.activityid = pa.activityid WHERE pa.packageid = ?";
+            List<Activity> activities = jdbcTemplate.query(activitySql, activityRowMapper, pkg.getPackageId());
+            pkg.setActivities(activities);
+        }
+
         model.addAttribute("packages", packages);
         return "listPackage";
     }
@@ -70,6 +77,13 @@ public class PackageController {
 
         String sql = "SELECT * FROM package";
         List<Package> packages = jdbcTemplate.query(sql, packageRowMapper);
+
+        for (Package pkg : packages) {
+            String activitySql = "SELECT a.* FROM activity a JOIN packageactivity pa ON a.activityid = pa.activityid WHERE pa.packageid = ?";
+            List<Activity> activities = jdbcTemplate.query(activitySql, activityRowMapper, pkg.getPackageId());
+            pkg.setActivities(activities);
+        }
+
         model.addAttribute("packages", packages);
         return "listPackageForCustomer";
     }
@@ -126,8 +140,11 @@ public class PackageController {
         String activitySql = "SELECT * FROM activity";
         List<Activity> activities = jdbcTemplate.query(activitySql, activityRowMapper);
 
+        String chosenActivitiesSql = "SELECT a.* FROM activity a JOIN packageactivity pa ON a.activityid = pa.activityid WHERE pa.packageid = ?";
+        List<Activity> chosenActivities = jdbcTemplate.query(chosenActivitiesSql, activityRowMapper, packageId);
+
         model.addAttribute("package", pkg);
-        model.addAttribute("chosenActivities", pkg.getActivities());
+        model.addAttribute("chosenActivities", chosenActivities);
         model.addAttribute("activities", activities);
         return "updatePackage";
     }
