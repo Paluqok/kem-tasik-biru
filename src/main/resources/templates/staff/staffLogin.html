@@ -34,7 +34,7 @@
 <body>
     <div class="container">
         <div class="switch-top-link">
-            <a href="custLogin.jsp">Customer Login</a>
+            <a th:href="@{/custLogin}">Customer Login</a>
         </div>
         <h1>Staff Login</h1>
         <form th:action="@{/loginStaff}" modelAttribute="loginStaff" th:objects = "${loginStaff}" method="post">
@@ -48,10 +48,9 @@
                 <input type="password" class="form-control" id="staffPassword" name="staffPassword" required>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
+            <a th:href="@{/staffSignUp}">Don't have an account? Sign Up</a>
         </form>
-        <div class="switch-link">
-            <a href="staffSignUp.jsp">Don't have an account? Sign Up</a>
-        </div>
+            
     </div>
 </body>
 </html>
