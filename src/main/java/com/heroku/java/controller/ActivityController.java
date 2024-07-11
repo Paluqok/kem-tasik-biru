@@ -332,6 +332,7 @@ private String handleImageUpload(MultipartFile activityImage, String currentImag
             return activityImage.getOriginalFilename();
         } catch (IOException e) {
             e.printStackTrace();
+            // Handle the error (e.g., log it and return the current image path)
         }
     }
     return currentImagePath;
